@@ -1,0 +1,112 @@
+classDiagram
+    class TestCodeItem {
+        +id: string
+        +name: string
+        +code: string
+    }
+
+    class TestItem {
+        <<interface>>
+        +type: string
+        +name: string
+    }
+
+    class TestCase {
+        +type: "test"
+        +name: string
+        +lineNumber?: number
+        +endLineNumber?: number
+    }
+
+    class TestSuite {
+        +type: "suite"
+        +name: string
+        +children: TestItem[]
+        +expanded: boolean
+    }
+
+    class AddTestModal {
+        -isOpen: boolean
+        -onClose: function
+        -testId?: string
+        +currentTestCode: string
+        +currentTestName: string
+        +currentTestId: string|null
+        +handleSaveTestCode(): void
+        +generateId(): string
+    }
+
+    class TestEditor {
+        -testCode: string
+        -setTestCode: function
+        -currentName: string
+        -setCurrentName: function
+        -testStructure: TestItem[]
+        -selectedTest: TestCase|undefined
+        +handleCodeChange(code: string): void
+        +handleToggle(suite: TestSuite): void
+        +handleTestClick(test: TestCase): void
+        +loadExampleCode(): void
+        +highlightCode(code: string): string
+    }
+
+    class ChatStore {
+        +testCodes: TestCodeItem[]
+        +setKey(key: string, value: any): void
+    }
+
+    class Chat {
+        +messages: Message[]
+        +selectedApiActions: any[]
+        +testCodes: TestCodeItem[]
+        +sendMessage(event, messageInput): void
+    }
+
+    class Workbench {
+        -isRunningTests: boolean
+        +handleRunTests(): void
+    }
+
+    class ActionRunner {
+        +addAction(actionData): void
+        +runAction(actionData): Promise<void>
+        -runTestAction(action): Promise<void>
+    }
+
+    class TestCaseItem {
+        -test: TestCase
+        -onClick: function
+        -isSelected: boolean
+    }
+
+    class TestSuiteItem {
+        -suite: TestSuite
+        -onToggle: function
+        -onTestClick: function
+        -selectedTest?: TestCase
+    }
+
+    class TestStructure {
+        -items: TestItem[]
+        -onToggle: function
+        -onTestClick: function
+        -selectedTest?: TestCase
+    }
+
+    TestItem <|-- TestCase
+    TestItem <|-- TestSuite
+    TestSuite o-- TestItem : contains
+    
+    AddTestModal *-- TestEditor : uses
+    TestEditor *-- TestStructure : uses
+    TestStructure *-- TestSuiteItem : uses
+    TestStructure *-- TestCaseItem : uses
+    
+    AddTestModal --> ChatStore : stores test codes
+    Chat --> ChatStore : retrieves test codes
+    
+    Workbench --> ActionRunner : uses
+    Chat --> Workbench : triggers tests
+    
+    AddTestModal ..> TestCodeItem : creates/updates
+    ChatStore o-- TestCodeItem : contains 

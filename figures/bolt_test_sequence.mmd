@@ -1,0 +1,52 @@
+sequenceDiagram
+    participant User
+    participant AddTestModal
+    participant TestEditor
+    participant ChatStore
+    participant Chat
+    participant AI
+    participant Workbench
+
+    User->>AddTestModal: 打开测试模态框
+    
+    AddTestModal->>TestEditor: 初始化编辑器
+    TestEditor->>TestEditor: 解析测试结构
+    TestEditor-->>User: 显示测试文件编辑器
+    
+    User->>TestEditor: 编辑测试代码
+    TestEditor->>TestEditor: 高亮代码
+    TestEditor->>TestEditor: 更新测试结构
+    
+    User->>AddTestModal: 保存测试
+    AddTestModal->>ChatStore: 保存测试代码
+    
+    User->>Chat: 发送消息
+    Chat->>ChatStore: 获取测试代码
+    
+    alt 有测试代码
+        Chat->>Chat: 创建包含测试的初始消息
+        Note over Chat: 添加测试代码导入消息
+        Note over Chat: 添加测试指示消息
+    end
+    
+    Chat->>AI: 发送消息及测试代码
+    
+    AI-->>Chat: 返回满足测试的代码
+    Chat-->>User: 显示生成的代码
+    
+    User->>Workbench: 运行测试
+    
+    Workbench->>Workbench: setIsRunningTests(true)
+    Workbench->>Workbench: 获取当前artifact
+    
+    Workbench->>Workbench: 创建测试操作
+    Note over Workbench: actionId: test-{timestamp}
+    Note over Workbench: action.type: 'test'
+    Note over Workbench: action.content: 'npm test'
+    
+    Workbench->>Workbench: 添加测试操作到runner
+    Workbench->>Workbench: 执行测试
+    
+    Workbench-->>User: 显示测试结果
+    Workbench->>Workbench: setIsRunningTests(false) 
+    
