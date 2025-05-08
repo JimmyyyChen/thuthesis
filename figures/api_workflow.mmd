@@ -1,0 +1,33 @@
+sequenceDiagram
+    actor User
+    participant UI as Chat UI
+    participant Tags as API Tags
+    participant Modal as API Modal
+    participant Store as Chat Store
+    participant DB as Storage (IndexedDB)
+    participant LLM as AI Model
+
+    %% API Management
+    User->>Tags: Click "Add API"
+    Tags->>Modal: Open Modal
+    Modal->>DB: Load APIs
+    User->>Modal: Create/Edit API
+    Modal->>DB: Save API
+    Modal->>Store: Update selectedApiActions
+    Store-->>Tags: Update displayed tags
+
+    %% Using in Chat
+    User->>UI: Send message
+    UI->>Store: Get selectedApiActions
+    Note over UI: Add hidden message with JSON.stringify(selectedApiActions)
+    UI->>LLM: Send prompt with API actions
+    LLM-->>UI: Generate response using APIs
+    UI-->>User: Display response
+
+    %% Editing/Removing
+    User->>Tags: Click API tag / Remove
+    Tags->>Modal: Open with selected API
+    User->>Modal: Modify API
+    Modal->>DB: Update API
+    Modal->>Store: Update selectedApiActions
+    Store-->>Tags: Refresh UI 
