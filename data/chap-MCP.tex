@@ -536,7 +536,7 @@ MCP方式相比传统AI开发方式具有以下优势：
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.7\textwidth]{figures/screenshots/iotdb-demo/mcp-config.png}
+  \includegraphics[width=0.75\textwidth]{figures/screenshots/iotdb-demo/mcp-config.png}
   \caption{\texttt{remote-sse}服务器配置与IoTDB工具发现}
   \label{fig:mcp-config}
 \end{figure}
@@ -560,18 +560,18 @@ paths:
               required: [database, sql]
 \end{verbatim}
 
-图~\ref{fig:openapi-editor}和图~\ref{fig:api-actions}分别展示了API编辑界面和最终配置的动作列表。
-
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.7\textwidth]{figures/screenshots/iotdb-demo/openapi-editor.png}
+  \includegraphics[width=0.8\textwidth]{figures/screenshots/iotdb-demo/openapi-editor.png}
   \caption{OpenAPI文档编辑与认证配置界面}
   \label{fig:openapi-editor}
 \end{figure}
 
-\begin{figure}[htbp]
+\clearpage
+
+\begin{figure}[t]
   \centering
-  \includegraphics[width=.9\textwidth]{figures/screenshots/iotdb-demo/api-actions.png}
+  \includegraphics[width=0.9\textwidth]{figures/screenshots/iotdb-demo/api-actions.png}
   \caption{最终配置的API动作列表}
   \label{fig:api-actions}
 \end{figure}
@@ -596,27 +596,32 @@ LLM首先顺序调用三个MCP工具（图~\ref{fig:mcp-call}）：
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=.5\textwidth]{figures/screenshots/iotdb-demo/mcp-call.png}
-  \caption{LLM顺序调用IoTDB相关MCP工具}
-  \label{fig:mcp-call}
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/screenshots/iotdb-demo/mcp-call.png}
+    \caption{LLM顺序调用IoTDB相关MCP工具}
+    \label{fig:mcp-call}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/screenshots/iotdb-demo/prompt-and-files.png}
+    \caption{LLM回复与自动生成的文件列表}
+    \label{fig:prompt-and-files}
+  \end{subfigure}
+  \caption{LLM工具调用与响应}
+  \label{fig:mcp-combined}
 \end{figure}
 
 \subsection{自动生成的前端应用}
 
 系统根据提示自动创建完整的Vite+React工程，包括依赖配置、文件结构和核心组件\texttt{BatteryDataChart.jsx}，并在内置Workbench环境中运行。
 
-图~\ref{fig:prompt-and-files}展示了LLM的回复摘要和生成的文件列表，图~\ref{fig:app-preview}展示了最终应用界面。该应用以折线图形式展示\texttt{DC Voltage}、\texttt{Load Current}和\texttt{Rectifier Current}等数据曲线，顶部\textit{Reload Data}按钮触发\texttt{queryTableData}API调用，下拉框支持数据条数切换。
-
-\begin{figure}[htbp]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=.5\textwidth]{figures/screenshots/iotdb-demo/prompt-and-files.png}
-  \caption{LLM回复与自动生成的文件列表}
-  \label{fig:prompt-and-files}
-\end{figure}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.6\textwidth]{figures/screenshots/iotdb-demo/app-preview.png}
+  \includegraphics[width=0.75\textwidth,height=0.75\textheight,keepaspectratio]{figures/screenshots/iotdb-demo/app-preview.png}
   \caption{生成应用的Workbench预览，展示电池数据监测折线图与数据刷新功能}
   \label{fig:app-preview}
 \end{figure}
+
+图~\ref{fig:mcp-call}展示了LLM顺序调用三个MCP工具的过程，图~\ref{fig:prompt-and-files}展示了回复摘要和生成的文件列表。图~\ref{fig:app-preview}展示了最终应用界面。该应用以折线图形式展示\texttt{DC Voltage}、\texttt{Load Current}和\texttt{Rectifier Current}等数据曲线，顶部\textit{Reload Data}按钮触发\texttt{queryTableData}API调用，下拉框支持数据条数切换。
