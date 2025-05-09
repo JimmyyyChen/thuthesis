@@ -1,0 +1,65 @@
+sequenceDiagram
+    participant User
+    participant Host as Browser
+    participant Client as MCP Client
+    participant ServerStdio as MCP Server (stdio)
+    participant ServerSSE as MCP Server (SSE)
+    participant Tools as External Tools/Data
+
+    %% 配置过程
+    User->>Host: 打开MCP配置界面
+    Host->>Host: 从IndexedDB获取现有配置
+    Host-->>User: 显示MCP配置
+    
+    %% stdio方式配置
+    User->>Host: 配置stdio类型MCP服务器
+    Host->>Client: 创建MCP客户端(stdio)
+    Client->>ServerStdio: 启动子进程并建立连接
+    Note over Client,ServerStdio: 通过命令行参数启动本地进程
+    ServerStdio->>Tools: 初始化本地工具访问
+    ServerStdio-->>Client: 提供可用工具列表
+    Client-->>Host: 返回工具信息
+    Host-->>User: 显示stdio服务器工具
+    
+    %% SSE方式配置
+    User->>Host: 配置SSE类型MCP服务器
+    Host->>Client: 创建MCP客户端(SSE)
+    Client->>ServerSSE: 发送HTTP请求建立SSE连接
+    Note over Client,ServerSSE: 通过HTTP连接到远程服务
+    ServerSSE->>Tools: 初始化远程API访问
+    ServerSSE-->>Client: 提供可用工具列表
+    Client-->>Host: 返回工具信息
+    Host-->>User: 显示SSE服务器工具
+    
+    %% 保存配置
+    User->>Host: 保存MCP配置
+    Host->>Host: 将配置保存到IndexedDB
+    
+    %% 对话过程
+    User->>Host: 发送对话消息
+    Host->>Host: 准备对话上下文
+    
+    %% 根据配置选择传输方式
+    Host->>Client: 传递对话到AI（附带MCP配置）
+    
+    %% 通过stdio调用工具
+    Client->>ServerStdio: AI请求调用本地工具
+    ServerStdio->>Tools: 执行本地工具操作
+    Tools-->>ServerStdio: 返回工具执行结果
+    ServerStdio-->>Client: 传递工具结果
+    
+    %% 通过SSE调用工具
+    Client->>ServerSSE: AI请求调用远程工具
+    ServerSSE->>Tools: 执行远程API调用
+    Tools-->>ServerSSE: 返回API响应
+    ServerSSE-->>Client: 传递工具结果
+    
+    %% 结果整合
+    Client-->>Host: 在对话中整合多个工具调用结果
+    Host-->>User: 显示完整对话响应
+
+    %% 会话结束
+    User->>Host: 结束对话
+    Host->>Client: 关闭MCP连接
+    Client->>ServerStdio: 关闭stdio进程
+    Client->>ServerSSE: 关闭SSE连接 

@@ -1,0 +1,43 @@
+classDiagram
+    class MCPConfig {
+        +mcpServers: Record~string, ServerConfig~
+    }
+
+    class ServerConfig {
+        +command?: string
+        +args?: string[]
+        +url?: string
+        +type?: string
+    }
+
+    class MCPClient {
+        <<interface>>
+        +tools(): Promise~any~
+        +close(): Promise~void~
+    }
+
+    class MCPService {
+        +createMCPClient(serverName, config): Promise~MCPClient~
+        +createMCPClients(mcpConfig): Promise~ToolsAndClients~
+        +closeMCPClients(clients): Promise~void~
+    }
+
+    class useMCPConfig {
+        +config: MCPConfig
+        +updateConfig(newConfig): void
+    }
+
+    class MCPConnection {
+        +checkServerAvailability(): void
+    }
+
+    class MCPCheckAPI {
+        +action(request): Response
+    }
+
+    MCPConfig *-- ServerConfig : contains
+    MCPService --> MCPClient : creates
+    useMCPConfig --> MCPConfig : manages
+    MCPConnection --> useMCPConfig : uses
+    MCPConnection --> MCPCheckAPI : calls
+    MCPCheckAPI --> MCPService : uses 
