@@ -2,9 +2,9 @@
 
 \chapter{测试驱动开发}
 
-测试驱动开发（Test-Driven Development, TDD）是一种软件开发方法论，核心在于先编写测试代码再实现功能代码。这种"测试先行"范式要求开发者首先明确定义预期行为与结果，随后实现满足测试条件的功能代码。TDD遵循"红-绿-重构"循环：编写一个失败的测试（红），实现最小可行代码使测试通过（绿），最后改进代码结构与设计（重构）\cite{Beck2002}。
+测试驱动开发（Test-Driven Development, TDD）是一种软件开发方法论，核心在于先编写测试代码再实现功能代码。这种"测试先行"范式要求开发者首先明确定义预期行为与结果，随后实现满足测试条件的功能代码。TDD遵循"红-绿-重构"循环：编写一个失败的测试（红），实现最小可行代码使测试通过（绿），最后改进代码结构与设计（重构）。
 
-bolt.se的测试模块是对TDD理念的工程化实现，使开发者能创建、管理测试用例，并引导大语言模型（LLM）生成满足这些测试要求的代码。本章分析TDD概念、方法论价值及bolt.se的测试功能技术实现。
+bolt.SE的测试模块是对TDD理念的工程化实现，使开发者能创建、管理测试用例，并引导大语言模型（LLM）生成满足这些测试要求的代码。本章分析TDD概念、方法论价值及bolt.SE的测试功能技术实现。
 
 \section{测试驱动开发的概念与意义}
 
@@ -23,7 +23,7 @@ bolt.se的测试模块是对TDD理念的工程化实现，使开发者能创建�
   \item \textbf{聚焦实现}：明确的测试目标减少了开发过程中的决策疲劳，避免过度工程和不必要的复杂性。
 \end{enumerate}
 
-在bolt.se这类开发平台中，结构化测试定义与自动化执行进一步增强了这些优势，优化开发流程并提高代码质量。
+在bolt.SE这类开发平台中，结构化测试定义与自动化执行进一步增强了这些优势，优化开发流程并提高代码质量。
 
 \subsection{TDD对LLM驱动开发的价值}
 在大型语言模型驱动的软件开发中，测试驱动方法具有特殊价值\cite{Mathews2024}：
@@ -40,11 +40,11 @@ bolt.se的测试模块是对TDD理念的工程化实现，使开发者能创建�
   \item \textbf{支持持续优化}：测试结果为LLM提供结构化反馈，引导其精确改进代码缺陷。
 \end{enumerate}
 
-bolt.se将测试代码集成至对话上下文，实现了LLM与测试用例的协同工作模式。这种方法既保留了LLM的生成灵活性，又引入了软件工程的严谨验证机制。
+bolt.SE将测试代码集成至对话上下文，实现了LLM与测试用例的协同工作模式。这种方法既保留了LLM的生成灵活性，又引入了软件工程的严谨验证机制。
 
 \section{Jest测试框架与TDD实践}
 
-Jest是Facebook开发的JavaScript测试框架，以简洁易用著称，已成为前端测试领域的主流选择\cite{Jest2023}。bolt.se采用Jest作为测试功能核心框架，并针对TDD工作流进行了优化。
+Jest是Facebook开发的JavaScript测试框架，以简洁易用著称，已成为前端测试领域的主流选择\cite{Jest2023}。bolt.SE采用Jest作为测试功能核心框架，并针对TDD工作流进行了优化。
 
 \subsection{Jest测试框架概述}
 
@@ -64,7 +64,7 @@ Jest提供了全面的测试工具集，具备以下核心特性：
   \item \textbf{覆盖率分析}：内置代码覆盖率统计与可视化报告。
 \end{enumerate}
 
-在bolt.se中，Jest测试通常采用如下结构：
+在bolt.SE中，Jest测试通常采用如下结构：
 
 \begin{verbatim}
 // 测试套件
@@ -80,11 +80,11 @@ describe('Calculator', () => {
 });
 \end{verbatim}
 
-bolt.se测试模块解析此结构，提取测试套件与用例信息，并将其转化为LLM可理解的约束条件。
+bolt.SE测试模块解析此结构，提取测试套件与用例信息，并将其转化为LLM可理解的约束条件。
 
 \subsection{TDD工作流程}
 
-bolt.se环境中的TDD工作流程整合了传统测试驱动与AI辅助开发的优势：
+bolt.SE环境中的TDD工作流程整合了传统测试驱动与AI辅助开发的优势：
 
 \begin{enumerate}
   \item \textbf{测试定义}：开发者在专用编辑器中创建测试代码，明确定义功能行为规范。
@@ -102,9 +102,9 @@ bolt.se环境中的TDD工作流程整合了传统测试驱动与AI辅助开发�
 
 此工作流程将TDD的规范性与AI生成的高效性结合，实现了更精确、高效的开发模式。
 
-\section{bolt.se测试功能技术实现}
+\section{bolt.SE测试功能技术实现}
 
-bolt.se将TDD原则融入系统架构，通过模块化设计实现了测试驱动的AI辅助开发流程。本节分析其技术实现，包括架构设计、核心组件和功能机制。
+bolt.SE将TDD原则融入系统架构，通过模块化设计实现了测试驱动的AI辅助开发流程。本节分析其技术实现，包括架构设计、核心组件和功能机制。
 
 \begin{figure}[htbp]
   \centering
@@ -115,7 +115,7 @@ bolt.se将TDD原则融入系统架构，通过模块化设计实现了测试驱�
 
 \subsection{架构设计与模块构成}
 
-bolt.se测试系统采用组件化架构，主要包含以下核心模块：
+bolt.SE测试系统采用组件化架构，主要包含以下核心模块：
 
 \begin{enumerate}
   \item \textbf{用户界面层}：
@@ -142,7 +142,7 @@ bolt.se测试系统采用组件化架构，主要包含以下核心模块：
 
 如图\ref{fig:test_sequence}所示，测试流程分为定义、使用和验证三个主要阶段，构成完整的测试生命周期管理。
 
-bolt.se定义了结构化的测试数据模型，如图\ref{fig:test_class}所示：
+bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所示：
 
 \begin{figure}[htbp]
   \centering
@@ -179,7 +179,7 @@ bolt.se定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 \subsection{测试解析与可视化机制}
 
-bolt.se实现了高效的测试代码解析与可视化机制：
+bolt.SE实现了高效的测试代码解析与可视化机制：
 
 \begin{enumerate}
   \item \textbf{语法分析}：采用正则表达式识别\texttt{describe}和\texttt{it}/\texttt{test}函数调用，提取测试结构。
@@ -197,7 +197,7 @@ bolt.se实现了高效的测试代码解析与可视化机制：
 
 \subsection{测试与LLM协同机制}
 
-bolt.se创新地实现了测试与LLM的协同工作机制：
+bolt.SE创新地实现了测试与LLM的协同工作机制：
 
 \begin{enumerate}
   \item \textbf{上下文嵌入}：启动对话时，系统将测试代码转换为结构化指令注入对话上下文。
@@ -213,143 +213,10 @@ bolt.se创新地实现了测试与LLM的协同工作机制：
 
 这种协同机制使LLM能够理解并遵循TDD原则，在严格约束下生成高质量代码。
 
-\section{应用案例分析}
-
-本节通过具体开发案例，展示bolt.se中测试驱动开发的实际应用流程。
-
-\subsection{测试定义阶段}
-
-开发者首先创建计算器功能的测试用例：
-
-\begin{verbatim}
-describe('Calculator', () => {
-  test('adds 1 + 2 to equal 3', () => {
-    const { add } = require('../calculator');
-    expect(add(1, 2)).toBe(3);
-  });
-  
-  test('subtracts 5 - 2 to equal 3', () => {
-    const { subtract } = require('../calculator');
-    expect(subtract(5, 2)).toBe(3);
-  });
-  
-  test('multiplies 2 * 3 to equal 6', () => {
-    const { multiply } = require('../calculator');
-    expect(multiply(2, 3)).toBe(6);
-  });
-  
-  test('divides 6 / 2 to equal 3', () => {
-    const { divide } = require('../calculator');
-    expect(divide(6, 2)).toBe(3);
-  });
-});
-\end{verbatim}
-
-系统解析测试代码，提取"Calculator"测试套件与四个具体测试用例，以树形结构进行展示。
-
-\subsection{代码生成阶段}
-
-开发者提交简洁需求：
-
-\begin{quote}
-\texttt{根据测试要求，实现一个简单的计算器模块}
-\end{quote}
-
-系统将测试代码作为上下文注入对话，自动生成指导信息：
-
-\begin{quote}
-\texttt{一个测试文件已被导入用于vitest。你需要确保生成的代码通过测试，通过：\\
-- 安装必要的依赖\\
-- 添加"test": "vitest run"脚本到package.json\\
-- 导入测试文件所需的函数\\
-- 在启动开发服务器前执行测试验证所有测试通过}
-\end{quote}
-
-LLM据此生成对应的计算器实现：
-
-\begin{verbatim}
-// calculator.js
-exports.add = (a, b) => a + b;
-exports.subtract = (a, b) => a - b;
-exports.multiply = (a, b) => a * b;
-exports.divide = (a, b) => a / b;
-\end{verbatim}
-
-同时自动生成项目配置：
-
-\begin{verbatim}
-// package.json
-{
-  "name": "calculator",
-  "version": "1.0.0",
-  "scripts": {
-    "test": "vitest run"
-  },
-  "devDependencies": {
-    "vitest": "^0.34.3"
-  }
-}
-\end{verbatim}
-
-\subsection{验证与反馈}
-
-执行测试验证实现代码\cite{Vitest2023}：
-
-\begin{verbatim}
-$ npm test
-
-> calculator@1.0.0 test
-> vitest run
-
-✓ __test__/calculator_test.test.js (4 tests) 3ms
-  ✓ Calculator (4 tests) 3ms
-    ✓ adds 1 + 2 to equal 3 1ms
-    ✓ subtracts 5 - 2 to equal 3 0ms
-    ✓ multiplies 2 * 3 to equal 6 0ms
-    ✓ divides 6 / 2 to equal 3 0ms
-
-Test Files  1 passed (1)
-Tests       4 passed (4)
-Start at    20:45:32
-Duration    1.20s
-\end{verbatim}
-
-测试全部通过，证明实现符合需求规格。若测试失败，可将错误信息反馈给LLM进行修复。
-
-\section{TDD与传统开发方式对比}
-
-TDD在bolt.se环境中相较传统开发方式具有明显优势：
-
-\begin{enumerate}
-  \item \textbf{需求精确性}：传统方法依赖自然语言描述容易产生歧义，而TDD通过测试代码准确定义预期行为。
-  
-  \item \textbf{开发直接性}：LLM能直接从测试理解功能要求并生成适配代码，减少需求沟通与理解环节。
-  
-  \item \textbf{质量内建}：测试驱动确保每个功能都有对应测试覆盖，自然形成高覆盖率与可靠实现。
-  
-  \item \textbf{验证即时性}：测试提供即时反馈，快速验证代码正确性，缩短开发迭代周期。
-  
-  \item \textbf{文档一致性}：测试代码作为活文档，比传统文档更准确且与代码自动同步。
-\end{enumerate}
-
-在LLM辅助环境中，TDD的价值进一步放大：
-
-\begin{enumerate}
-  \item \textbf{约束生成}：测试明确约束LLM的输出空间，减少不合理代码生成的可能性。
-  
-  \item \textbf{指导清晰}：测试为LLM提供明确的功能规格，使生成内容更符合实际需求。
-  
-  \item \textbf{客观评估}：测试结果提供客观评价标准，超越了代码外观的主观判断。
-  
-  \item \textbf{反馈精确}：测试失败信息为LLM提供准确的问题定位，支持精准修复。
-\end{enumerate}
-
-这些特性使TDD成为bolt.se中AI辅助开发的理想方法论基础。
-
 \section{实例应用场景}
 \label{sec:tdd-example}
 
-本节通过JavaScript计算器的完整开发流程，展示bolt.se中基于"红–绿–重构"循环的测试驱动开发过程及LLM参与的自动修复机制。
+本节通过JavaScript计算器的完整开发流程，展示bolt.SE中基于"红–绿–重构"循环的测试驱动开发过程及LLM参与的自动修复机制。
 
 \subsection{插入Jest测试代码与需求声明}
 
@@ -360,7 +227,7 @@ TDD在bolt.se环境中相较传统开发方式具有明显优势：
   \label{fig:tdd_add_test}
 \end{figure}
 
-开发者将覆盖基本算术功能的测试用例导入系统，bolt.se随即：
+开发者将覆盖基本算术功能的测试用例导入系统，bolt.SE随即：
 
 \begin{enumerate}
   \item 解析\verb|describe|与\verb|test|调用，构建测试树结构；

@@ -5,11 +5,11 @@
 
 在现代软件工程中，CI/CD（持续集成与持续部署）已成为保障开发效率与代码质量的核心机制。传统搭建 CI/CD 流水线通常依赖人工配置脚本与手动部署流程，不仅繁琐易错，且难以在多工具协同开发场景中实现统一管理。
 
-\texttt{bolt.se} 通过模型上下文协议（MCP）引入标准化的工具接口，使大语言模型（LLM）能够自动访问如 GitHub、GitLab 等远程仓库管理平台，执行如创建仓库、推送代码、触发流水线等操作。一旦接入了具备 CI/CD 能力的 MCP 服务器（例如 \texttt{server-github} 或 \texttt{server-gitlab}），系统即具备了构建自动化部署流程的基础。
+\texttt{bolt.SE} 通过模型上下文协议（MCP）引入标准化的工具接口，使大语言模型（LLM）能够自动访问如 GitHub、GitLab 等远程仓库管理平台，执行如创建仓库、推送代码、触发流水线等操作。一旦接入了具备 CI/CD 能力的 MCP 服务器（例如 \texttt{server-github} 或 \texttt{server-gitlab}），系统即具备了构建自动化部署流程的基础。
 
-另一方面，\texttt{bolt.se} 的 TDD 模块提供从测试定义到代码验证的一体化支持，使 LLM 在开发早期即能生成具备行为保证的功能模块。二者结合，即形成"测试定义—功能实现—代码验证—版本控制—自动部署"的完整开发闭环。
+另一方面，\texttt{bolt.SE} 的 TDD 模块提供从测试定义到代码验证的一体化支持，使 LLM 在开发早期即能生成具备行为保证的功能模块。二者结合，即形成"测试定义—功能实现—代码验证—版本控制—自动部署"的完整开发闭环。
 
-本章将展示如何在 \texttt{bolt.se} 中配置 GitLab MCP 工具，配合 TDD 流程构建 Todo 应用，并自动生成 CI/CD 配置，实现从本地测试到远程部署的全链路自动化流程。这一过程体现了 MCP 与 TDD 的协同机制如何系统性地提升 LLM 驱动开发的工程化能力。
+本章将展示如何在 \texttt{bolt.SE} 中配置 GitLab MCP 工具，配合 TDD 流程构建 Todo 应用，并自动生成 CI/CD 配置，实现从本地测试到远程部署的全链路自动化流程。这一过程体现了 MCP 与 TDD 的协同机制如何系统性地提升 LLM 驱动开发的工程化能力。
 
 \begin{enumerate}
   \item 由 Jest 测试用例反向生成最小可行代码并即时验证（TDD）。
@@ -17,7 +17,7 @@
   \item 由 LLM 自动编写 \texttt{.gitlab-ci.yml}，为主干推送触发测试并部署到 Vercel。
 \end{enumerate}
 
-该实验验证了：在统一的自然语言交互中，\texttt{bolt.se} 可将「测试—代码—仓库—流水线—部署」完整链路自动化，且各步骤均可回溯、重放。
+该实验验证了：在统一的自然语言交互中，\texttt{bolt.SE} 可将「测试—代码—仓库—流水线—部署」完整链路自动化，且各步骤均可回溯、重放。
 
 \section{环境准备与整体流程}
 \label{sec:cicd-overview}
@@ -139,7 +139,7 @@ GitLab 网页端界面（图 \ref{fig:gitlab_repo}）可见首个提交 \textit{
   \label{fig:gitlab_repo}
 \end{figure}
 
-通过将 MCP 与 TDD 深度整合，\texttt{bolt.se} 能够把「本地测试 → 远端仓库 → CI/CD → 生产部署」串联为无缝的自动化流水线。  
+通过将 MCP 与 TDD 深度整合，\texttt{bolt.SE} 能够把「本地测试 → 远端仓库 → CI/CD → 生产部署」串联为无缝的自动化流水线。  
 与传统脚本式 DevOps 相比，该模式具备：
 
 \begin{itemize}
