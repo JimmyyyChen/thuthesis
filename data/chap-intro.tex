@@ -4,92 +4,100 @@
 
 \section{研究背景与意义}
 
-近年来，大语言模型（Large Language Models, LLMs）在人工智能领域取得了突破性进展，显著推动了软件开发技术与方法论的革新。OpenAI 的 Codex 模型（Chen 等人，2021~\cite{Chen2021}）和 GPT-3.5/4 系列（OpenAI，2022--2023~\cite{OpenAI2022}）展示了从自然语言描述自动生成代码的能力，引发了软件开发范式变革的讨论~\cite{arxiv2401}。2022 年以来，学术界和工业界涌现出许多专注于代码的 LLM，如 Google 的 AlphaCode（Li 等人，2022~\cite{Li2022AlphaCode}）、Meta 的 CodeLlama（Roziere 等人，2023~\cite{Roziere2023}）以及开源社区的 StarCoder（Li 等人，2023~\cite{Li2023StarCoder}）等~\cite{arxiv2401}。
+近年来，大语言模型（LLMs）在代码生成任务上取得了显著进展。Jiang 等人通过系统性文献回顾指出，LLM 在 HumanEval、MBPP 等基准上的测试通过率持续提升，反映出模型对自然语言需求向可执行代码映射能力的质的飞跃\cite{jiang2024survey}。Chen 等人进一步综述了评估 LLM 代码生成准确性、效率与可读性的方法，指出现有评测指标的局限与未来改进方向\cite{chen2024eval}。在工业界，AI 编程辅助工具的使用率迅速攀升：GitHub 报告 92\% 的美国开发者已在日常工作中使用此类工具\cite{githubblog2023}，而《金融时报》指出，SWE-bench 评测中 LLM 的问题解决率已从 2023 年的 4.4\% 提升至 69.1\%，表明 AI 驱动开发效率显著提升\cite{ft2025ai}。
 
-这些模型具备强大的自然语言处理和代码生成能力，能够将用户描述的需求快速而准确地转化为代码，从而极大降低了软件开发领域的技术进入壁垒。特别是以GitHub Copilot为代表的LLM辅助开发工具，已展现出令人瞩目的代码自动生成与辅助编程性能，在提升开发效率和代码生产力方面取得了积极的初步成果。在函数级别的编程挑战（如 LeetCode、HumanEval）上，这些模型已经能达到甚至超越人类平均水平~\cite{LLMCodeGraph2024}。
+尽管如此，将 LLM 真正融入大型软件工程实践仍面临诸多挑战，包括上下文理解受限、反馈机制不完善及工程化流程缺失。因此，如何将 LLM 的强大生成能力与软件工程最佳实践（如 TDD、API-First、CI/CD）深度融合，已成为当前研究的关键问题。
 
-然而，将 LLM 真正融入软件工程实践，仍面临着上下文理解、交互反馈和流程集成等多方面挑战。尽管当前LLM工具在特定编程任务中表现突出，这些技术瓶颈制约了其更广泛和更深入的应用。因此，探索如何有效融合LLMs的先进特性与软件工程的最佳实践，建立系统化的集成工具链，已成为当前软件工程领域的重要研究课题。
+\section{当前 LLM 辅助开发工具分析}
 
-\section{当前LLM辅助开发工具分析}
-
-为弥合 LLM 生成代码与实际开发环境之间的鸿沟，近年出现了一批交互式 LLM 辅助开发工具。这些工具通常集成在开发者常用的 IDE 或编辑器中，提供从代码建议、自动修改到运行结果预览的闭环体验。表~\ref{tab:llm-tools}对比了部分典型LLM辅助开发工具在集成平台、主要功能和反馈机制方面的特性。
+为全面比较主流工具在实际开发环境中的差异，表~\ref{tab:llm-tools-updated} 汇总了几款代表性产品在集成平台、主要功能与反馈机制上的对比。
 
 \begin{table}[htbp]
-\centering
-\footnotesize
-\caption{典型 LLM 辅助开发工具功能对比}
-\label{tab:llm-tools}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{4.6cm}}
-\toprule
-\textbf{工具名称} & \textbf{集成平台} & \textbf{主要功能} & \textbf{反馈机制} \\
-\midrule
-GitHub Copilot (2021) & VS Code 等 IDE 扩展 & 基于当前文件上下文提供单文件代码补全及行内生成建议 & 无实时运行反馈；对全局项目结构理解不足，初学者较难把握整体架构 \\
-\addlinespace
-Cursor (2023) & 基于 VS Code 衍生的专用编辑器 & 支持对话式代码修改、跨文件重构及差异展示 & 通过对话嵌入反馈修改建议；缺乏成熟的 CI/CD 与 TDD 支持 \\
-\addlinespace
-ChatGPT Code Interpreter (2023) & ChatGPT Web 界面 & 对话生成代码与 Python 沙盒执行，支持文件上传与结果展示 & 提供执行输出和文件交互反馈，但运行环境局限于 Python \\
-\addlinespace
-bolt.new (2024) & 浏览器内 WebContainers & 实现全流程全栈应用生成，支持依赖安装与即时部署 & 交互式反馈良好，用户体验稳定；作为商业产品具备高成熟度 \\
-\addlinespace
-bolt.diy (2024) & 浏览器内 WebContainers（开源） & 快速原型生成、低门槛入门，支持多 LLM 模型接入 & 开源优势明显，便于社区扩展；在工程实践支持上尚不完善 \\
-\bottomrule
-\end{tabular}
+  \centering
+  \footnotesize
+  \caption{典型 LLM 辅助开发工具功能对比（2024–2025）}
+  \label{tab:llm-tools-updated}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{
+    >{\raggedright\arraybackslash}p{2.4cm}
+    >{\raggedright\arraybackslash}p{2.6cm}
+    >{\raggedright\arraybackslash}p{3.6cm}
+    >{\raggedright\arraybackslash}p{4.6cm}
+  }
+    \toprule
+    \textbf{工具名称} & \textbf{集成平台} & \textbf{主要功能} & \textbf{反馈机制} \\
+    \midrule
+    GitHub Copilot\cite{copilotx2023}      & VS Code／JetBrains 扩展        & 多模型（GPT-4o、Claude 3.5、Gemini 1.5 Pro）行内补全、代码审查支持      & 无内置 CI 流水线反馈                                \\
+    \addlinespace
+    Cursor\cite{cursor2025wiki}            & 独立 AI IDE（VS Code 分支）    & 对话式多文件生成、跨文件重构、Diff 视图              & 实时代码差异预览；无原生 TDD／CI/CD 集成            \\
+    \addlinespace
+    v0.dev\cite{v0dev2024}                 & 浏览器内 Chat UI               & 基于 React/Tailwind 的 UI 自动生成                  & 页面预览与即时部署；缺少测试与流水线支持            \\
+    \addlinespace
+    Replit\cite{replit2025wiki}            & 云端 IDE                       & Ghostwriter AI、Agent V2 对话式生成、协同编辑       & 实时代码运行、部署管道；无结构化测试反馈            \\
+    \addlinespace
+    Lovable\cite{lovable2025times}         & Web App Builder                & 对话式前后端＋数据库一体化生成                      & 即时预览与调试；无原生 CI/CD 流水线                \\
+    \addlinespace
+    Windsurf\cite{windsurf2024}            & AI 增强 IDE                    & 行内补全、多文件编辑、聊天问答                      & 变更高亮与上下文聊天；尚无 TDD／CI 插件            \\
+    \addlinespace
+    bolt.new\cite{arunachalam2024boltnew,boltnewgithub2024} & 浏览器 IDE（StackBlitz WebContainers） & 从提示到部署：项目依赖管理、Node.js 运行、前后端一体化生成 & 终端输出、即时预览与部署状态反馈；支持文件系统与第三方 API 调用 \\
+    \bottomrule
+  \end{tabular}
 \end{table}
 
 \subsection{主流工具发展概述}
 
-\textbf{GitHub Copilot (2021)}作为早期商用的AI辅助编程工具，以VS Code扩展形式出现。它基于OpenAI Codex模型，在用户编码时给出行内自动补全建议。Copilot的架构较为简单：将当前文件上下文和光标位置的内容发送给LLM，返回可能的续写代码~\cite{DivaCopilot}。尽管提升了编码效率，其仅依赖当前文件上下文进行代码补全，对初学者而言理解整个项目结构存在难度；同时，缺乏交互式反馈机制与自动调试功能。
+\paragraph{GitHub Copilot X}  
+自 2023 年推出 Copilot X 以来，GitHub Copilot 在模型切换与多文件补全方面取得显著进展。通过集成 GPT-4o、Claude 3.5 和 Gemini 1.5 Pro，Copilot X 不仅可以基于全项目上下文生成建议，还新增了行内代码审查和安全警告功能，但其与 CI/CD 或 TDD 流水线的深度集成仍有待加强\cite{copilotx2023}。
 
-\textbf{Cursor (2023)}是基于VS Code开发的AI代码编辑器，支持行内补全、对话式代码修改以及跨文件重构~\cite{CursorReview}。该工具通过diff展示修改建议，使用户可直观了解代码变动。虽然融合了编辑、对话和执行等功能，但对初学者使用门槛较高，且在软件工程流程方面仍处于实验性探索阶段。
+\paragraph{Cursor}  
+Cursor 引入"vibe coding"工作流，以对话式方式驱动跨文件生成与重构，并在 Diff 视图中即时展示变更。该模式显著提升了多文件协同编辑效率，但在自动化测试和持续交付方面尚未形成完整方案，用户仍需借助外部工具补足流程\cite{cursor2025wiki}。
 
-\textbf{ChatGPT Code Interpreter (2023)}实质上是ChatGPT的Python沙盒扩展，允许用户在对话中生成、执行代码，并上传数据文件获取运行结果~\cite{FirstBlush2023}。这种"所见即所得"的运行反馈降低了模型幻觉风险。然而，其运行环境主要局限于Python，对复杂项目支持不足，同时未能整合完整的软件工程流程。
+\paragraph{v0.dev}  
+v0.dev 利用对话界面自动生成 React/Tailwind 前端代码，并提供一键部署到 Vercel 的能力，适用于快速原型和前端 UI 验证。其快捷的反馈机制覆盖界面渲染和网络请求调试，但缺乏对单元测试和端到端测试的原生支持\cite{v0dev2024}。
 
-\textbf{bolt.new和bolt.diy (2024)}为交互式代码生成领域带来新突破。bolt.new作为商业产品，依托StackBlitz的WebContainers技术，实现从提示、运行、编辑到部署的全流程开发体验；bolt.diy则在继承核心功能的同时，以开源模式降低使用门槛，支持多种LLM集成~\cite{BoltNew2024, BoltDIY2024}。尽管在简化开发环境搭建方面具优势，但在支持现代软件工程实践方面仍存在局限。
+\paragraph{Replit}  
+Replit 的 Ghostwriter AI 与 Agent V2 为用户提供端到端的云端 IDE 体验，支持实时运行、协同编辑及简单部署管道。虽然具备运行时验证能力，但其测试框架与 CI/CD 集成依赖外部插件，尚未内置结构化测试反馈\cite{replit2025wiki}。
 
-\subsection{发展趋势与技术挑战}
+\paragraph{Lovable}  
+Lovable 以"纯对话生成前后端＋数据库"见长，能够在一次交互中输出可用的全栈代码并实时预览。然而，其生成流程缺乏内建的版本控制和流水线自动化，团队协作与长线维护支持有限\cite{lovable2025times}。
 
-新一代工具正逐步引入实时验证与反馈环节，使LLM生成代码能立即在环境中检验，不断改进输出质量。这种人机协作的实时交互为构建\emph{bolt.SE}这类智能开发环境提供了技术基础。然而，现有工具仍面临三方面主要挑战：
+\paragraph{Windsurf}  
+Windsurf 将多文件行内补全与上下文聊天结合，为开发者提供语义丰富的代码建议。然而，目前仍未发布与 TDD 或 CI/CD 深度耦合的插件，难以形成从生成到部署的闭环流程\cite{windsurf2024}。
 
-1. 上下文理解受限：大多数工具缺乏对大型代码库的整体理解能力，难以有效掌握跨文件依赖关系和项目架构
-2. 反馈机制不完善：实时验证与即时预览功能尚不成熟，阻碍了快速迭代与问题定位
-3. 软件工程实践支持不足：缺乏对TDD、API-First、CI/CD等先进软件工程方法论的系统支持
+\paragraph{bolt.new}  
+bolt.new 利用 StackBlitz WebContainers 实现浏览器内完整运行时，将依赖安装、Node.js 服务和前后端代码生成无缝集成。借助终端输出和部署状态反馈，bolt.new 为快速验证场景提供了接近本地环境的体验，但在测试驱动和持续交付方面仍需工具链扩展\cite{arunachalam2024boltnew,boltnewgithub2024}。
 
-这些挑战共同构成了当前LLM辅助开发工具的瓶颈，限制了其在实际软件工程中的应用价值。
+\subsection{主流工具存在的核心问题}
 
-\section{本研究的核心问题与创新点}
+尽管上述工具在各自领域取得了一定进展，但在应用于实际软件工程实践中仍存在几项关键挑战：
 
-尽管已有的LLM辅助编程工具在实际应用中初步证明了其潜力，但仍然存在多个关键挑战亟待解决：
+\subsubsection{上下文理解局限}
 
-\subsection{上下文理解挑战}
+在处理大型与复杂软件代码库时，当前工具面临对代码上下文理解不足的问题。GitHub Copilot 等早期工具主要基于当前打开的文件内容进行补全，对项目全局信息缺乏深入理解\cite{DivaCopilot}。即使是 Cursor 和 Windsurf 等支持多文件编辑的工具，在理解代码模块间接口关系、命名规范以及整体架构设计约定等方面仍有不足，导致生成的代码难以与既有环境高效融合。
 
-在处理大型与复杂软件代码库时，目前LLM工具面临对代码上下文理解不足的问题。早期工具（如GitHub Copilot）只能利用当前打开文件内容进行补全，对整个项目全局信息缺乏了解~\cite{DivaCopilot}。研究表明，LLM在独立代码片段任务表现出色，但在仓库级任务上表现不佳~\cite{LLMCodeGraph2024}。
+\subsubsection{交互反馈与即时验证不足}
 
-这种局限具体体现在对代码模块间接口、依赖关系、命名规范、编码标准以及系统整体架构设计约定等信息的理解不足，导致生成代码难以与既有环境实现高效融合，降低了实际应用价值与长期可维护性。
+现有工具普遍缺乏完整、成熟的网页端实时代码运行及预览能力，使开发人员难以即时观察和验证生成代码的实际表现。虽然 bolt.new 通过 WebContainers 提供了浏览器内运行环境，v0.dev 和 Lovable 支持 UI 代码即时预览，但它们在复杂项目的测试验证方面仍不完善：
 
-研究者已探索多种解决方案：一方面，扩大模型上下文窗口，如DeepSeek-Coder通过填空式训练策略扩展上下文至16K tokens~\cite{arxiv2401,Guo2024}；另一方面，利用检索增强方法提供相关代码片段和设计信息，如CodeXGraph框架将代码库解析为图数据库，帮助LLM理解代码结构关系~\cite{LLMCodeGraph2024}。尽管有所进展，完全架构感知的代码生成仍是开放问题。
+\begin{itemize}
+    \item 大多数工具无法提供生成代码的即时测试反馈
+    \item 依赖与配置问题难以及时发现与解决
+    \item 用户体验割裂，缺乏从代码生成到测试验证的无缝衔接
+\end{itemize}
 
-\subsection{交互反馈与即时验证挑战}
+\subsubsection{软件工程实践融合不足}
 
-现有工具普遍缺乏完整、成熟的网页端实时代码运行及预览能力，使开发人员难以即时观察和验证生成代码的具体表现，限制了开发过程的敏捷性与交互性。这一问题导致：
+当前 LLM 辅助工具尚未有效整合现代软件工程最佳实践。Replit 提供了部分部署管道，但在完整的测试驱动开发（TDD）、API 优先设计和持续集成/部署（CI/CD）流程方面的支持仍然有限。这种融合不足导致：
 
-1. 生成代码与实际运行环境存在差距，无法立即验证可行性
-2. 依赖与配置问题难以及时发现与解决
-3. 用户体验割裂，缺乏从代码生成到运行的无缝衔接
+\begin{itemize}
+    \item 缺乏基于测试定义指导代码生成的系统化方法
+    \item API 开发过程中规范定义与实现分离，难以确保一致性
+    \item 从代码生成到部署的全链路自动化程度低，仍需大量人工介入
+\end{itemize}
 
-ChatGPT Code Interpreter通过Python沙盒提供了初步解决方案，而bolt.new利用WebContainers技术实现了更完整的运行环境。然而，这些工具仍缺乏与完整软件工程流程的整合，难以支持复杂项目的全生命周期管理。
+这些挑战凸显了一个系统化软件工程环境的必要性，该环境不仅需要利用 LLM 的代码生成能力，还应将其与软件工程最佳实践紧密融合，提供从需求定义到代码验证再到系统部署的完整流程支持。
 
-\subsection{软件工程实践融合挑战}
-
-LLM工具设计尚未有效整合现代软件工程实践，导致开发流程缺乏系统化和自动化管理机制，削弱了代码质量保障和开发过程掌控的有效性。
-
-\textbf{测试驱动开发（TDD）}对LLM具有特殊价值。Mathews和Nagappan（2024）研究表明，提供测试用例能显著提高LLM生成代码的正确率~\cite{Mathews2024TDD}，测试用例明确了预期行为，减少了模糊理解，推动了"生成-执行-验证"循环在AI辅助编程中的应用。
-
-\textbf{持续集成与交付（CI/CD）}方面，研究显示ChatGPT等模型已用于代码审查和CI配置生成~\cite{ChatGPTUsage2023}，但因训练数据时效性问题，可能生成过时配置，显示出LLM与CI/CD深度融合的挑战。
-
-\textbf{API优先开发（API-First）}领域，研究采用分而治之方法处理大型API规范~\cite{DivaCopilot}，如先让LLM阅读API说明并输出实现计划，再逐条接口生成代码。Ericsson公司实验表明，这种方法能产出相当比例正确样板代码，但仍需人工审查修改。
-
-\section{bolt.SE的创新设计}
+\section{bolt.SE的目标}
 
 基于以上分析，本研究提出了面向无代码基础用户与编程初学者的交互式软件开发环境——bolt.SE。其中，"bolt"来源于开源项目bolt.diy，体现该平台的技术基础；"SE"则表示软件工程（Software Engineering），突出该环境对软件工程方法论的深度融合与系统化支持。
 
@@ -99,47 +107,65 @@ bolt.SE旨在将大语言模型的自然语言处理与代码生成优势，与�
 
 bolt.SE将重点集成三项核心软件工程实践：
 
-1. \textbf{测试驱动开发（TDD）模块}：提供从测试定义到代码验证的一体化支持，使LLM生成的代码始终受到测试规范的严格约束
-   
-2. \textbf{API优先开发（API-First）模块}：基于OpenAPI规范的API定义、管理与调用机制，支持LLM理解并生成符合API规范的代码
-
-3. \textbf{模型上下文协议（MCP）}：提供标准化接口，使LLM能够安全地调用外部工具和数据源，扩展功能边界
+\begin{itemize}
+    \item \textbf{API优先开发（API-First）模块}：如\ref{chap:api-first}章所述，基于OpenAPI规范的API定义、管理与调用机制，支持LLM理解并生成符合API规范的代码，实现功能扩展与服务集成
+    \item \textbf{测试驱动开发（TDD）模块}：如\ref{chap:tdd}章所述，提供从测试定义到代码验证的一体化支持，使LLM生成的代码始终受到测试规范的严格约束，通过"红-绿-重构"循环推动高质量代码生成
+    \item \textbf{模型上下文协议（MCP）}：如\ref{chap:mcp}章所述，提供标准化接口，使LLM能够安全地调用外部工具和数据源，突破知识截止限制，扩展功能边界
+\end{itemize}
 
 这三大模块协同工作，形成完整的开发闭环，如\ref{chap:mcp-tdd-cicd}章所示的"测试定义—功能实现—代码验证—版本控制—自动部署"全链路。
 
 \subsection{交互式开发与反馈机制}
 
-bolt.SE在bolt.diy基础上强化了即时反馈与交互验证能力：
+bolt.SE在bolt.diy基础上集成了即时反馈与交互验证能力：
 
-1. 实时代码执行与预览，支持多语言环境
-2. 测试结果可视化与错误定位
-3. API调用验证与响应展示
-4. 工具链调用可视化与执行状态追踪
+\begin{itemize}
+    \item \textbf{实时代码执行与预览}：基于WebContainers技术，提供浏览器内完整运行时环境，支持多语言项目的即时执行与渲染。系统通过Preview组件实现多设备响应式预览，支持移动端与桌面端不同视口模拟，并能追踪页面渲染状态与资源加载情况。
+    
+    \item \textbf{测试结果可视化与错误定位}：提供测试套件的层次化展示与交互式编辑。系统能够解析测试执行结果，通过颜色编码与图表直观呈现通过/失败状态，并精确定位到失败测试的代码行，帮助开发者快速识别与修复问题。
+          
+    \item \textbf{工具链调用可视化}：通过MCP协议提供工具调用界面，展示执行进度与结果数据。bolt.SE记录工具调用历史与参数，形成可追溯的开发日志，方便开发者回溯问题与决策过程。
+    
+    \item \textbf{终端输出集成}：内置多终端会话管理，支持命令执行结果实时展示。终端输出采用语法高亮，增强关键信息可读性，并支持错误输出的特殊标记，便于快速定位问题。
+    
+    \item \textbf{代码差异对比}：DiffView组件提供文件修改前后的对比视图，清晰展示每行代码的变更。系统支持文件历史浏览与版本回退，帮助开发者理解代码演化过程。
+\end{itemize}
 
-这些功能使开发者能够即时验证LLM生成代码的正确性，并通过反馈循环不断优化结果。
+这些功能构成了完整的开发反馈体系，使开发者能够有效验证代码的正确性，并通过多角度的技术反馈持续改进开发成果。bolt.SE提供从代码编写到测试验证再到部署预览的一体化工作流程，显著减少了开发过程中在不同工具间切换的时间成本。
 
 \subsection{上下文理解与工具协作增强}
 
 针对上下文理解挑战，bolt.SE提供：
 
-1. 结构化API与测试定义，为LLM提供精确约束
-2. MCP工具集成，使LLM能访问外部数据源与工具
-3. 代码仓库理解与多文件协同修改支持
+\begin{itemize}
+    \item \textbf{MCP工具与数据源集成}：基于模型上下文协议（MCP）提供标准化接口，使LLM能安全调用外部工具和实时数据源，通过stdio或HTTP SSE等传输方式支持本地与远程工具执行，智能选择最适合任务的工具组合。
+    
+    \item \textbf{超长上下文记忆与归档}：利用LLM的超长文本处理能力，bolt.SE将累积的对话历史完整纳入模型记忆上下文，确保代码生成过程中保持连贯性和一致性，减少因上下文遗失导致的重复解释和冲突需求。
+    
+    \item \textbf{XML结构化消息解析}：通过MessageParser将LLM响应解析为结构化XML格式，清晰标记每个生成操作（如文件创建、命令执行），提高系统对LLM意图的理解准确度。
+    
+    \item \textbf{代码仓库整体理解}：支持多文件协同修改与版本跟踪，LLM能够理解项目整体结构、依赖关系和代码风格，确保生成代码符合既有项目规范。
+    
+    \item \textbf{WebContainer隔离运行环境}：利用WebContainer技术创建浏览器内完整Node.js运行时，提供安全隔离的代码执行环境，使LLM能获取实际运行结果反馈，不断调整和优化生成代码。
+\end{itemize}
 
-这些机制使bolt.SE能够更好地理解并适应复杂软件项目的上下文环境。
+这些机制相互配合，使bolt.SE能够从多角度理解并适应复杂软件项目的上下文环境，显著提升LLM生成代码的准确性、一致性和实用性。
 
 \section{研究方法与论文结构}
+TODO: 研究方法与论文结构 还未包含 bolt.se 整体框架
 
 本研究采用系统设计与实验验证相结合的方法，通过bolt.SE平台实现对核心技术模块的集成与评估。论文结构安排如下：
 
 第一章（本章）介绍研究背景、问题提出与创新点，分析当前LLM辅助开发工具的发展与挑战，概述bolt.SE的核心设计。
 
-第\ref{chap:tdd}章详细阐述测试驱动开发（TDD）模块的概念与技术实现，分析TDD在LLM驱动开发中的价值，并通过具体案例展示测试定义如何引导LLM生成高质量代码。
+第\ref{chap:tdd}章详细阐述测试驱动开发（TDD）模块的概念与技术实现，分析TDD在LLM驱动开发中的价值，并通过具体案例展示测试定义如何引导LLM生成高质量代码。该章将介绍bolt.SE测试功能的技术实现，包括架构设计、核心组件和功能机制，并通过JavaScript计算器的开发流程，展示基于"红–绿–重构"循环的测试驱动开发过程。
 
-第\ref{chap:api-first}章聚焦API优先开发模块，介绍OpenAPI规范在bolt.SE中的应用，API定义与管理机制，以及LLM如何理解并调用API实现功能扩展。
+第\ref{chap:api-first}章聚焦API优先开发模块，介绍OpenAPI规范在bolt.SE中的应用，API定义与管理机制，以及LLM如何理解并调用API实现功能扩展。该章将分析bolt.SE中APIActions的实现方案，展示结构化API定义如何帮助LLM突破知识局限，通过与外部服务交互扩展其能力边界。
 
-第\ref{chap:mcp}章深入剖析模型上下文协议（MCP）的原理与实现，MCP如何为LLM提供标准化工具接口，并通过案例展示MCP在实际开发中的应用。
+第\ref{chap:mcp}章深入剖析模型上下文协议（MCP）的原理与实现。MCP作为一种开放标准协议，为AI应用与外部数据源、工具之间建立统一接口，类似于USB-C为物理设备提供的标准连接方式。该章将详述bolt.SE中MCP的架构设计与模块划分，包括配置管理、服务层与用户界面组件等。重点分析MCP如何通过标准化工具接口使LLM能够安全地访问外部资源，突破知识截止限制，降低输出幻觉风险，并支持实时数据获取与专业工具调用。通过IoTDB数据库集成案例，展示MCP在统一自然语言交互中同时发现并调用多类工具的强大能力。
 
-第\ref{chap:mcp-tdd-cicd}章综合前述核心技术，展示MCP与TDD协同驱动的GitLab CI/CD自动化流程，体现bolt.SE在全链路软件工程实践中的系统集成能力。
+第\ref{chap:mcp-tdd-cicd}章综合前述核心技术，展示MCP与TDD协同驱动的GitLab CI/CD自动化流程，体现bolt.SE在全链路软件工程实践中的系统集成能力。该章通过Todo应用实例，详述从Jest测试定义到GitLab仓库创建、CI配置自动生成及Vercel部署的完整开发闭环。通过MCP提供的标准化GitLab工具接口，系统能够自动完成仓库初始化、代码推送与流水线触发等操作，实现从"测试—代码—仓库—流水线—部署"的全链路自动化，为开发者节省大量机械性工作。
+
+bolt.SE的整体框架以模型上下文协议（MCP）为核心连接层，通过标准化工具接口打通LLM与外部环境之间的边界。在此基础上，TDD模块提供行为驱动的代码生成与验证机制，API-First模块支持结构化服务接口定义与调用，而CI/CD模块则实现从代码到部署的自动化流水线。这种架构设计使各模块既能独立工作，又能协同配合，共同构建一个功能完备、流程闭环的软件开发环境，有效解决当前LLM辅助开发面临的上下文理解、交互反馈和工程实践集成等核心挑战。
 
 通过这一结构安排，本研究将系统阐述bolt.SE如何通过技术创新与软件工程实践融合，解决当前LLM辅助开发面临的核心挑战，为构建更高效、更易用的软件开发环境提供新思路。
