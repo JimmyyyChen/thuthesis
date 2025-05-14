@@ -67,7 +67,7 @@ Jest提供了全面的测试工具集，具备以下核心特性：
 
 在bolt.SE中，Jest测试通常采用如下结构：
 
-\begin{verbatim}
+\begin{minted}{javascript}
 // 测试套件
 describe('Calculator', () => {
   // 测试用例
@@ -79,7 +79,7 @@ describe('Calculator', () => {
     expect(subtract(5, 2)).toBe(3);
   });
 });
-\end{verbatim}
+\end{minted}
 
 bolt.SE测试模块解析此结构，提取测试套件与用例信息，并将其转化为LLM可理解的约束条件。
 

@@ -80,7 +80,7 @@ OpenAPI规范是结构化的API描述格式，主要包含以下组成部分\cit
 
 以下是bolt.SE中支持的OpenAPI定义示例，展示一个简单的天气API：
 
-\begin{verbatim}
+\begin{minted}{yaml}
 openapi: 3.0.0
 info:
   title: Weather API
@@ -110,7 +110,7 @@ paths:
                     type: number
                   conditions:
                     type: string
-\end{verbatim}
+\end{minted}
 
 bolt.SE的APIActions模块解析这类OpenAPI定义，提取API端点和操作，使LLM能理解并正确调用这些API。
 \section{bolt.SE中的APIActions实现}

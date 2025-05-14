@@ -67,7 +67,7 @@ bolt支持多种LLM的接入，包括GPT-o3-mini、Claude 3.7 Sonnet等，未来
 
 传统的代码生成工具，如GitHub Copilot、Cursor和DeepSeek等，通常在生成代码时只关注当前输入的单一上下文片段或局限于当前编辑区域附近的上下文。这导致当代码库规模增大时，生成的代码可能缺乏一致性，或忽略已有代码库的风格和约定。
 
-而在bolt平台中，由于所有的代码生成过程本质上都表现为用户与大语言模型之间一来一往的交互对话，因此，整个项目的代码库实际上就是一系列高度结构化的“对话记录”。利用LLM的超长文本处理能力，bolt能够将这些累积的对话历史完整地纳入模型的记忆上下文。这种独特的设计使LLM不仅能基于当前用户输入生成代码，还能够回顾并记忆历史生成的代码片段、开发者的设计决策以及代码库整体的架构约定。
+而在bolt平台中，由于所有的代码生成过程本质上都表现为用户与大语言模型之间一来一往的交互对话，因此，整个项目的代码库实际上就是一系列高度结构化的"对话记录"。利用LLM的超长文本处理能力，bolt能够将这些累积的对话历史完整地纳入模型的记忆上下文。这种独特的设计使LLM不仅能基于当前用户输入生成代码，还能够回顾并记忆历史生成的代码片段、开发者的设计决策以及代码库整体的架构约定。
 
 \section{MessageParser}
 
@@ -77,24 +77,28 @@ MessageParser是系统中的一个关键模块，负责将大语言模型（LLM�
 
 为了便于MessageParser解析和处理LLM的输出，我们设计了一个特定的XML结构。该结构能够清晰地表达每一步生成的代码和执行的操作。以下是一个例子，展示了如何通过XML结构描述一个创建JavaScript函数的过程：
 
-\begin{lstlisting}[breaklines=true,basicstyle=\ttfamily\small]
+\begin{minted}{xml}
 <example>
-  <user_query>Can you help me create a JavaScript function to calculate the factorial of a number?</user_query>
+  <user_query>
+    Create a JS function to compute factorial.
+  </user_query>
   <assistant_response>
-    Certainly, I can help you create a JavaScript function to calculate the factorial of a number.
-
-    <boltArtifact id="factorial-function" title="JavaScript Factorial Function">
+    Certainly, Let’s create a factorial function.
+    <boltArtifact id="factorial-function" 
+                  title="JavaScript Factorial Function">
       <boltAction type="file" filePath="index.js">
         function factorial(n) {
           return n <= 1 ? 1 : n * factorial(n - 1);
         }
       </boltAction>
 
-      <boltAction type="shell">node index.js</boltAction>
+      <boltAction type="shell">
+        node index.js
+      </boltAction>
     </boltArtifact>
   </assistant_response>
 </example>
-\end{lstlisting}
+\end{minted}
 
 \subsubsection{XML标签说明}
 

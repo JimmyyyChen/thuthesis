@@ -77,7 +77,7 @@ MCP协议由以下关键组件构成：
 
 以下是bolt.SE支持的MCP服务器配置示例：
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "mcpServers": {
     "localFileSystem": {
@@ -91,7 +91,7 @@ MCP协议由以下关键组件构成：
     }
   }
 }
-\end{verbatim}
+\end{minted}
 
 bolt.SE的MCP模块解析此类配置，创建相应MCP客户端，连接指定服务器并获取可用工具集。
 
@@ -406,7 +406,7 @@ bolt.SE的MCP实现支持多种应用场景，从本地工具集成到云服务�
 
 通过stdio类型MCP服务器，实现安全的本地文件系统操作：
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "mcpServers": {
     "localFiles": {
@@ -416,7 +416,7 @@ bolt.SE的MCP实现支持多种应用场景，从本地工具集成到云服务�
     }
   }
 }
-\end{verbatim}
+\end{minted}
 
 此配置使LLM能够：
 \begin{itemize}
@@ -431,7 +431,7 @@ bolt.SE的MCP实现支持多种应用场景，从本地工具集成到云服务�
 
 使用SSE类型MCP服务器集成外部服务和API：
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "mcpServers": {
     "weatherAPI": {
@@ -444,7 +444,7 @@ bolt.SE的MCP实现支持多种应用场景，从本地工具集成到云服务�
     }
   }
 }
-\end{verbatim}
+\end{minted}
 
 此配置使LLM能够：
 \begin{itemize}
@@ -457,7 +457,7 @@ bolt.SE的MCP实现支持多种应用场景，从本地工具集成到云服务�
 
 通过专用MCP服务器集成开发工具链：
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "mcpServers": {
     "gitOperations": {
@@ -471,7 +471,7 @@ bolt.SE的MCP实现支持多种应用场景，从本地工具集成到云服务�
     }
   }
 }
-\end{verbatim}
+\end{minted}
 
 此配置支持LLM：
 \begin{itemize}
@@ -524,7 +524,7 @@ MCP方式相比传统AI开发方式具有以下优势：
 
 图~\ref{fig:mcp-config}展示了bolt.SE的MCP配置界面。系统通过以下配置成功发现三个IoTDB工具：
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "mcpServers": {
     "remote-sse": {
@@ -533,7 +533,7 @@ MCP方式相比传统AI开发方式具有以下优势：
     }
   }
 }
-\end{verbatim}
+\end{minted}
 
 \begin{figure}[htbp]
   \centering
@@ -546,7 +546,7 @@ MCP方式相比传统AI开发方式具有以下优势：
 
 开发者将IoTDB查询接口按OpenAPI 3.0规范描述（如下所示），并在bolt.SE的\textit{Edit actions}界面完成配置，仅保留\textit{queryTableData}动作供LLM调用。
 
-\begin{verbatim}
+\begin{minted}{yaml}
 paths:
   /rest/table/v1/query:
     post:
@@ -559,7 +559,7 @@ paths:
             schema:
               type: object
               required: [database, sql]
-\end{verbatim}
+\end{minted}
 
 \begin{figure}[htbp]
   \centering
