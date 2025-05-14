@@ -7,7 +7,7 @@
 
 # ThuThesis
 
-Scroll down for the English version of README.
+> Scroll down for the English version of README.
 
 **ThuThesis** 是 **T**sing**h**ua **U**niversity **Thesis** LaTeX Template 的缩写。
 
@@ -15,7 +15,12 @@ Scroll down for the English version of README.
 
 **由于模板升级频繁，在开始使用和提问前，请确保您已经认真完整地阅读了使用说明文档和示例代码。**
 
-任何违反 [LaTeX项目公共许可证 v1.3c](https://www.latex-project.org/lppl/lppl-1-3c/) 使用 ThuThesis 的行为将被记录在 [耻辱柱](https://github.com/tuna/thuthesis/issues/754) 页面中，以示警告。
+## 版权
+
+本项目采用 [LaTeX项目公共许可证 v1.3c](https://www.latex-project.org/lppl/lppl-1-3c/) 授权，任何违反该许可证使用 ThuThesis 的行为将被记录在 [耻辱柱](https://github.com/tuna/thuthesis/issues/754) 页面中，以示警告。
+
+本项目分发的 `thu-fig-logo.pdf` 与 `thu-text-logo.pdf` 为载有清华大学校徽与校名的图形文件，用于制作制作本科生综合论文训练封面。这些图形从 [清华大学视觉形象系统](https://vi.tsinghua.edu.cn/) 获取，除裁剪周边空白外，项目维护者未进行任何其他修改。
+请注意：相关图形与文字都是清华大学的注册商标，除此模板外，请勿用于任何其他用途。
 
 ## 下载
 
@@ -35,7 +40,7 @@ Scroll down for the English version of README.
     * [TUNA 镜像站](https://mirrors.tuna.tsinghua.edu.cn/github-release/tuna/thuthesis/)：GitHub Releases 的镜像。
   * 在线编辑：
     * [TeXPage 模板](https://www.texpage.com/template/72b580ca-51fa-4ecc-82b3-0509bc1d6a07)（提供 Windows 中文字体）
-    * [Overleaf 模板](https://www.overleaf.com/latex/templates/thuthesis-tsinghua-university-thesis-latex-template/cfwgcxtvkbsx)
+    * [Overleaf 模板](https://www.overleaf.com/latex/templates/thuthesis-tsinghua-university-thesis-latex-template/cfwgcxtvkbsx) （[Overleaf 降低了免费账户的编译时间](https://www.overleaf.com/blog/changes-to-free-compile-timeouts-and-servers)， 使用本模板的项目会因为规模较大[容易超时](https://github.com/tuna/thuthesis/issues/984)）
 * 开发版：[GitHub](https://github.com/tuna/thuthesis)
 
 ### 注意事项
@@ -57,7 +62,7 @@ Scroll down for the English version of README.
 
 #### 发布版
 
-下载发布版的的 zip 包，使用其中的 `thuthesis.cls` 等文件覆盖原有的即可，无须额外操作。
+下载发布版的 zip 包，使用其中的 `thuthesis.cls` 等文件覆盖原有的即可，无须额外操作。
 
 #### 开发版
 
@@ -73,6 +78,7 @@ Scroll down for the English version of README.
 * 先到 [FAQ](https://github.com/tuna/thuthesis/wiki/FAQ) 看看常见问题；
 * 在 [GitHub Discussions](https://github.com/tuna/thuthesis/discussions) 搜索已有讨论，如果没有则提出新问题；
 * 如果认为模板存在问题，可在 Issues 中使用相应的模板提出。
+* 入门问题可以参考[wiki/新手指南](https://github.com/tuna/thuthesis/wiki/新手指南)学习
 
 ## Makefile的用法
 
@@ -97,7 +103,13 @@ This package establishes a simple and easy-to-use LaTeX template for Tsinghua di
 
 **This template is subject to frequent changes. Please make sure you have read the usage documentation and example code completely and carefully before using and asking questions.**
 
-Any use of ThuThesis in violation of [The LaTeX project public license v1.3c](https://www.latex-project.org/lppl/lppl-1-3c/) will be recorded in the [Hall of Shame](https://github.com/tuna/thuthesis/issues/754).
+## Copyright
+
+This project is licensed under the [The LaTeX project public license v1.3c](https://www.latex-project.org/lppl/lppl-1-3c/). Any use of ThuThesis that violates this license will be recorded in the [Hall of Shame](https://github.com/tuna/thuthesis/issues/754).
+
+The distributed `thu-fig-logo.pdf` and `thu-text-logo.pdf` files in this project contain the graphical emblem and name of Tsinghua University, and are used for creating undergraduate thesis covers only.
+These graphics were obtained from the [Tsinghua University Visual Identity System](https://vi.tsinghua.edu.cn). No modifications were made by the project maintainers except cropping the white space. 
+Note: Both the relevant graphics and text are registered trademarks of Tsinghua University. You must not use them for any other purposes except within this template.
 
 ## Downloads
 
@@ -117,7 +129,7 @@ Before you start writing, it is recommended to copy or rename `thuthesis-example
     * [TUNA Mirrors](https://mirrors.tuna.tsinghua.edu.cn/github-release/tuna/thuthesis/): mirror of GitHub Releases
   * Online editor:
     * [TeXPage template](https://www.texpage.com/template/72b580ca-51fa-4ecc-82b3-0509bc1d6a07) (providing Chinese fonts of Windows)
-    * [Overleaf template](https://www.overleaf.com/latex/templates/thuthesis-tsinghua-university-thesis-latex-template/cfwgcxtvkbsx)
+    * [Overleaf template](https://www.overleaf.com/latex/templates/thuthesis-tsinghua-university-thesis-latex-template/cfwgcxtvkbsx) ([free compile time was reduced](https://www.overleaf.com/blog/changes-to-free-compile-timeouts-and-servers); projects using this template will be relatively large, and thus [likely to time-out](https://github.com/tuna/thuthesis/issues/984))
 * Developer versions: [GitHub](https://github.com/tuna/thuthesis)
 
 ### Notes
@@ -155,6 +167,7 @@ Please follow the procedure below:
 * Check the [FAQ](https://github.com/tuna/thuthesis/wiki/FAQ).
 * Search [GitHub Discussions](https://github.com/tuna/thuthesis/discussions) and create if not existed.
 * Create an issue (with specified template) if you believe there is a bug.
+* Beginners may go to [wiki/新手指南](https://github.com/tuna/thuthesis/wiki/新手指南) for basic information.
 
 ## Makefile Usage
 
