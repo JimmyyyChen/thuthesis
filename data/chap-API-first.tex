@@ -3,63 +3,34 @@
 \chapter{API优先开发的设计与实现}
 \label{chap:api-first}
 
-API优先开发（API-First Development）是一种软件设计与开发方法论，其核心在于在实际开发前，先完成应用程序接口（Application Programming Interface, API）的设计与定义。与传统开发模式相比，API优先开发将接口设计置于开发流程前端，作为系统架构和功能实现的基础。在此模式下，开发团队首先创建API规范（通常基于OpenAPI/Swagger标准），明确定义接口资源、端点、请求方法、参数、响应格式及认证机制等要素。
+API优先开发（API-First Development）是一种软件设计与开发方法论，其核心在于在实际开发前完成应用程序接口（Application Programming Interface, API）的设计与定义。明确的API规范使开发团队能在实际实现前达成共识，促进前端、后端和移动端的并行开发，减少集成阶段的冲突和重复工作。统一的API设计确保系统各服务接口的一致性，降低维护成本。以API为界面的系统设计也推动了模块化和解耦架构的形成，各服务只需关注自身API的实现和使用，无需了解其他组件的内部工作机制。
 
-bolt.SE的APIActions模块是API优先理念的具体实现，允许用户定义和管理外部API，并使大语言模型（Large Language Model, LLM）能够理解并调用这些API扩展功能。本章将介绍API优先开发的概念、意义、优势、对LLM驱动软件开发的重要性，以及bolt.SE中APIActions的实现方案。
+本章将介绍API优先开发在bolt.SE中的实现方案与实例应用场景。
 
-\section{API优先开发的概念与意义}
+\section{API优先开发对于bolt.SE的意义}
 
-\subsection{API优先开发在软件工程中的优势}
-API优先开发为现代软件工程带来了以下优势：
+在LLM驱动的软件开发中，API优先方法具有独特价值。LLM与外部系统交互需要明确的结构和规范，API定义为LLM提供了调用外部服务的具体指南，减少模糊指令导致的错误。通过API集成，LLM能够获取实时数据和使用专业工具，扩展其能力范围。API定义中的认证和授权机制为LLM提供了受控的访问方式，确保其操作在安全合规的范围内执行。此外，API优先方法支持LLM将复杂任务分解为多个API调用的组合，提高问题解决效率。
 
-\begin{enumerate}
-  \item \textbf{并行开发效率}：明确的API规范使前端、后端和移动端团队能够在实际实现前达成共识，支持并行开发，减少集成阶段的冲突和返工。
-  
-  \item \textbf{一致性与标准化}：统一的API设计确保系统各服务接口的一致性，简化学习曲线，降低维护成本。
-  
-  \item \textbf{模块化与解耦}：以API为界面的系统设计促进高内聚低耦合架构，各服务或模块只需关注自身API的实现和消费，不必了解其他组件内部逻辑。
-  
-\end{enumerate}
+bolt.SE将API优先理念融入平台设计，通过将OpenAPI规范集成到开发流程中，实现LLM与外部API的有效协作，开发者能通过自然语言交互获得API增强的开发支持。bolt.SE的APIActions模块结合了LLM的灵活性与API的精确性和功能扩展性，有效提升了软件开发效率。
 
-\subsection{API优先开发对LLM驱动软件开发的重要性}
-在LLM驱动的软件开发范式中，API优先开发具有特殊意义：
+\section{bolt.SE中的OpenAPI应用}
 
-\begin{enumerate}
-  \item \textbf{结构化信息交互}：LLM与外部系统交互需要明确的结构和规范。API定义为LLM提供了调用外部服务的蓝图，避免了模糊指令导致的错误。
-  
-  \item \textbf{功能扩展}：通过API集成，LLM可突破知识截止限制，访问实时数据、专业工具和特定领域服务，扩展其能力边界。
-  
-  \item \textbf{权限控制}：API定义中的认证和授权机制为LLM提供受控访问方式，确保其操作在安全合规边界内执行。
-    
-  \item \textbf{组合能力}：API优先开发支持LLM与多种服务和工具的组合使用，使复杂任务可分解为多个API调用的组合，增强问题解决能力。
-\end{enumerate}
+在bolt.SE的设计过程中，我们选择OpenAPI规范作为API描述标准，主要基于其广泛的行业接受度、丰富的工具生态系统以及对机器可读格式的良好支持。相比其他API描述格式，OpenAPI提供了更完整的功能描述能力和更好的扩展性，这些特性使其特别适合与LLM集成，便于模型理解和处理API结构。
 
-bolt.SE深度融合API优先理念，通过将OpenAPI规范集成到开发流程中，实现LLM与外部API的无缝协作，使开发者能通过自然语言交互获得API增强的智能辅助。bolt.SE的APIActions模块作为此理念的实现，结合了LLM的灵活性与API的精确性和功能扩展性，为软件开发带来显著效率提升。
+OpenAPI规范（原Swagger规范）是API优先开发的主流规范之一，为API描述和交互提供了标准化、语言无关的格式\cite{openapi2023}。作为业界广泛采用的API定义标准，OpenAPI使开发者能以声明式方式完整定义API的各方面，实现从设计到实现、测试和文档的全生命周期管理。
 
-\section{OpenAPI规范与API设计}
-OpenAPI规范（原Swagger规范）是API优先开发的核心技术支撑，为API描述和交互提供了标准化、语言无关的格式\cite{openapi2023}。作为业界广泛采用的API定义标准，OpenAPI使开发者能以声明式方式完整定义API的各方面，实现从设计到实现、测试和文档的全生命周期管理。
+OpenAPI规范采用JSON或YAML格式，结构化描述API的端点（endpoints）、操作（operations）、参数、响应、认证方法等关键要素。这种规范不仅适合人类理解，也便于机器处理，成为前端、后端和各类工具间沟通的桥梁。在bolt.SE的开发环境中，OpenAPI规范定义RESTful API调用说明，从而更高效地利用现有功能，避免重复开发，结构化API定义还能够避免在大模型上下文中包含冗长API使用说明，节省token空间。
 
-OpenAPI规范采用JSON或YAML格式，结构化描述API的端点（endpoints）、操作（operations）、参数、响应、认证方法等关键要素。这种规范不仅适合人类理解，也便于机器处理，成为前端、后端和各类工具间沟通的桥梁。
-
-在bolt.SE的开发环境中，OpenAPI规范定义RESTful API调用说明，从而更高效地利用现有功能，避免重复开发，结构化API定义使大模型能够：
-\begin{enumerate}
-  \item 准确理解API功能和用法，无需详细自然语言解释
-  \item 通过调用现有API获取数据，而非生成可能不准确的信息
-  \item 避免在上下文中包含冗长API使用说明，节省token空间
-  \item 将复杂任务分解为定义明确的API调用序列，提高解决效率
-\end{enumerate}
-
-\subsection{OpenAPI规范简介}
-OpenAPI规范是结构化的API描述格式，主要包含以下组成部分\cite{openapi2023spec}：
+OpenAPI规范主要包含以下组成部分\cite{openapi2023spec}：
 
 \begin{enumerate}
-  \item \textbf{基本信息}：API的标题、描述、版本、联系人信息和许可证等元数据。
+  \item 基本信息：API的标题、描述、版本、联系人信息和许可证等元数据。
   
-  \item \textbf{服务器信息}：API的基础URL和不同环境（开发、测试、生产）的服务器地址。
+  \item 服务器信息：API的基础URL和不同环境（开发、测试、生产）的服务器地址。
   
-  \item \textbf{路径}：API的各端点及可用HTTP方法（GET、POST、PUT、DELETE等），是规范核心部分。
+  \item 路径：API的各端点及可用HTTP方法（GET、POST、PUT、DELETE等），是规范核心部分。
   
-  \item \textbf{组件}：包含可重用部分：
+  \item 组件：包含可重用部分：
     \begin{itemize}
       \item \textit{schemas}：API使用的数据模型和对象结构。
       \item \textit{parameters}：可重用的参数定义。
@@ -67,15 +38,7 @@ OpenAPI规范是结构化的API描述格式，主要包含以下组成部分\cit
       \item \textit{securitySchemes}：API支持的安全认证机制。
     \end{itemize}
   
-  \item \textbf{操作}：每个API端点的可用操作，包括：
-    \begin{itemize}
-      \item 操作ID与摘要，用于工具和代码生成。
-      \item 描述与标签，用于文档组织。
-      \item 参数定义（路径、查询、头部、cookie等）。
-      \item 请求体结构与格式。
-      \item 可能的响应状态与内容。
-      \item 所需安全机制。
-    \end{itemize}
+  \item 操作：每个API端点的可用操作，包括操作ID与摘要、描述与标签、参数定义（路径、查询、头部、cookie等）、请求体结构与格式、可能的响应状态与内容及所需安全机制。
 \end{enumerate}
 
 以下是bolt.SE中支持的OpenAPI定义示例，展示一个简单的天气API：
@@ -113,55 +76,17 @@ paths:
 \end{minted}
 
 bolt.SE的APIActions模块解析这类OpenAPI定义，提取API端点和操作，使LLM能理解并正确调用这些API。
+
 \section{bolt.SE中的APIActions实现}
-bolt.SE作为AI驱动的软件开发平台，将API优先开发理念融入其架构设计。系统通过APIActions模块，使用户能够定义、管理和应用外部API，同时使LLM能理解并调用这些API，实现功能扩展和技术集成。本节介绍bolt.SE中APIActions的实现方案，从整体架构到具体功能实现。
+bolt.SE通过APIActions模块，使用户能够定义、管理和应用外部API，同时使LLM能理解并调用这些API，实现功能扩展和技术集成。图\ref{fig:api_workflow}展示了完整的API使用工作流程，包括用户创建、编辑和使用API的流程，以及API信息在系统各组件间的传递方式。
 
 \begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\textwidth]{figures/api_workflow.pdf}
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{figures/api_workflow.pdf}}
   \caption{API使用工作流程图：展示用户创建、编辑和使用API的完整流程，以及API信息在系统各组件间的传递方式}
   \label{fig:api_workflow}
 \end{figure}
 
-\subsection{APIActions}
-APIActions是bolt.SE中实现API优先开发的核心功能模块，为LLM提供识别、理解和调用外部API的能力，同时优化token使用效率。该模块基于结构化数据模型设计，通过系统化的类结构定义API信息，实现从规范解析到功能调用的完整流程。图\ref{fig:api_actions_class}展示了APIActions的数据模型类图，描述了系统如何组织和管理API定义，为后续讨论提供了结构基础。在此框架下，APIActions通过以下几种方式提升LLM应用效率：
-
-\begin{enumerate}
-  \item \textbf{结构化Schema传递}：APIActions将OpenAPI规范解析为紧凑的TypeScript数据模型（ApiActions类），仅保留端点信息（path、method）与参数定义的核心要素，相比原始描述节省token消耗。
-  
-  \item \textbf{外部数据获取}：通过ApiActions内嵌认证机制（apiKeyAuth/otherAuth），LLM直接访问实时数据源，如天气服务或金融API。
-  
-  \item \textbf{模块化上下文管理}：通过\texttt{ApiActionsContextTags}组件实现API选择性加载，用户可精确控制当前对话中加入哪些API定义，避免全量API信息占用上下文窗口，实现基于任务的上下文优化。
-  
-  \item \textbf{缓存与持久化优化}：系统通过IndexedDB持久化存储API定义（\texttt{useApiActions} Hook），避免重复传输API信息，在多轮对话中持续复用已定义的API结构，降低冗余信息传递。
-  
-  \item \textbf{可视化选择机制}：用户通过直观的UI界面选择所需API，系统仅将关联API信息注入对话上下文，避免全局加载所有可用API定义。
-\end{enumerate}
-
-\subsection{整体架构设计与模块划分}
-bolt.SE的APIActions系统采用模块化设计，由以下核心组件构成：
-
-\begin{enumerate}
-  \item \textbf{用户界面组件}：
-    \begin{itemize}
-      \item \texttt{ApiActionsContextTags}：显示聊天界面中选中的API标签
-      \item \texttt{ApiActionsModal}：管理API的主要模态窗口
-      \item \texttt{EditApiActionsModal}：创建和编辑API的编辑器界面
-    \end{itemize}
-  
-  \item \textbf{数据管理组件}：
-    \begin{itemize}
-      \item \texttt{chatStore}：管理当前聊天中选中的API（selectedApiActions）
-      \item \texttt{useApiActions}：提供API增删改查功能的React Hook
-      \item \texttt{IndexedDB存储}：持久化存储API定义
-    \end{itemize}
-  
-  \item \textbf{AI交互层}：负责将选定API信息传递给LLM，并处理模型响应结果。
-\end{enumerate}
-
-如图\ref{fig:api_workflow}所示，整个API使用流程分为三个主要阶段：API创建与管理、在对话中使用API以及API的编辑与移除。这种设计确保了API的全生命周期管理，从定义到使用再到维护的完整闭环。
-
-在数据模型设计方面，bolt.SE定义了结构化的API数据模型，如图\ref{fig:api_actions_class}所示。核心数据结构是ApiActions类，包含API的所有必要信息：
+APIActions是bolt.SE中实现API优先开发的核心功能模块，为LLM提供识别、理解和调用外部API的能力，同时优化token使用效率。该模块基于结构化数据模型设计，通过系统化的类结构定义API信息，实现从规范解析到功能调用的完整流程。图\ref{fig:api_actions_class}展示了APIActions的数据模型类图，描述了系统如何组织和管理API定义。
 
 \begin{figure}[htbp]
   \centering
@@ -170,104 +95,44 @@ bolt.SE的APIActions系统采用模块化设计，由以下核心组件构成：
   \label{fig:api_actions_class}
 \end{figure}
 
-
-% classDiagram
-%     class ApiActions {
-%         +id: string
-%         +name: string
-%         +actions: Action[]
-%         +authType: string
-%         +schema: string
-%         +serverUrl: string
-%         +apiKeyAuth?: ApiKeyAuth
-%         +otherAuth?: OtherAuth
-%     }
-    
-%     class Action {
-%         +name: string
-%         +method: string
-%         +path: string
-%         +summary: string
-%     }
-    
-%     class ApiKeyAuth {
-%         +key: string
-%         +authType: string
-%         +customHeaderName?: string
-%     }
-    
-%     class OtherAuth {
-%         +description: string
-%         +headers: Record<string,string>
-%         +queryParams: Record<string,string>
-%     }
-    
-%     class ChatStore {
-%         +selectedApiActions: ApiActions[]
-%         +setKey(key, value): void
-%     }
-    
-%     class useApiActions {
-%         +apiActions: ApiActions[]
-%         +isLoading: boolean
-%         +saveAction(action): Promise<string>
-%         +deleteAction(id): Promise<boolean>
-%         +refreshActions(): Promise<void>
-%     }
-    
-%     ApiActions "1" *-- "many" Action
-%     ApiActions "1" o-- "0..1" ApiKeyAuth
-%     ApiActions "1" o-- "0..1" OtherAuth
-%     ChatStore "1" o-- "many" ApiActions
-%     useApiActions -- ApiActions: manages
-
-ApiActions数据模型主要包括：
+ApiActions类是核心数据结构，包含API的所有必要信息：
 
 \begin{enumerate}
-  \item \textbf{基本信息}：唯一标识符（id）、名称（name）和基础URL（serverUrl）。
+  \item 基本信息：唯一标识符（id）、名称（name）和基础URL（serverUrl）。
   
-  \item \textbf{API操作集}：由多个Action对象组成，每个Action定义一个API端点的HTTP方法、路径和功能摘要。
+  \item API操作集：由多个Action对象组成，每个Action定义一个API端点的HTTP方法、路径和功能摘要。
   
-  \item \textbf{认证信息}：支持三种认证方式：
-    \begin{itemize}
-      \item \texttt{none}：无需认证的API
-      \item \texttt{apiKey}：通过API密钥认证，支持Basic、Bearer或自定义头部方式
-      \item \texttt{other}：其他自定义认证，可配置自定义头部和查询参数
-    \end{itemize}
+  \item 认证信息：支持无需认证的API（none）、API密钥认证（apiKey，支持Basic、Bearer或自定义头部方式）以及其他自定义认证（other，可配置自定义头部和查询参数）。
   
-  \item \textbf{OpenAPI规范}：通过schema字段存储完整OpenAPI规范定义，为系统提供API详细信息。
+  \item OpenAPI规范：通过schema字段存储完整OpenAPI规范定义，为系统提供API详细信息。
 \end{enumerate}
 
-bolt.SE的APIActions模块具有以下关键功能：
+APIActions通过以下几种方式优化了LLM应用效率：
 
 \begin{enumerate}
-  \item \textbf{OpenAPI解析与提取}：系统解析OpenAPI规范，自动识别并提取API端点、方法和参数，减少用户配置负担。
+  \item 结构化Schema传递：将OpenAPI规范解析为紧凑的TypeScript数据模型，仅保留端点信息与参数定义的核心要素，相比原始描述节省token消耗。
   
-  \item \textbf{多种认证支持}：灵活支持不同API认证方式，包括无认证、API密钥（Bearer、Basic、自定义头部）和其他自定义认证方式。
+  \item 外部数据获取：LLM能透过提供的API，直接访问实时数据源，如天气服务或金融API。
   
-  \item \textbf{API标签系统}：通过标签化展示选中API，提供直观视觉反馈，方便管理多个API。
+  \item 模块化上下文管理：用户可通过\texttt{ApiActionsContextTags}组件控制当前对话中加入哪些API定义作为上下文，避免全量API信息占用上下文窗口。
   
-  \item \textbf{实时编辑与更新}：支持API定义的实时编辑和更新，变更立即反映在对话中。
-  
-  \item \textbf{LLM集成机制}：将选中API信息以结构化形式注入LLM上下文，使模型能理解并正确调用这些API。
-\end{enumerate}
+  \item 缓存与持久化优化：系统通过IndexedDB持久化存储API定义，避免重复传输API信息，在多轮对话中持续复用已定义的API结构，降低冗余信息传递。
+  \end{enumerate}
 
 \section{实例应用场景}
 
-本节以聊天机器人应用为例，展示在bolt.SE中如何使用APIActions模块集成多个外部API，并借助LLM实现任务规划、代码生成与界面交互。该机器人能够回答天气相关问题并展示狗狗图片，集成了OpenAI API、NWS Weather API与The Dog API。
+本节以聊天机器人应用为例，展示bolt.SE中APIActions模块如何集成外部API并借助LLM实现任务规划和代码生成。该机器人集成了OpenAI API、NWS Weather API与The Dog API，能够回答天气相关问题并展示狗狗图片。
 
-\subsection{添加与配置 APIActions}
+\subsection{API配置与应用开发流程}
 
-用户首先通过图形界面进入APIActions模块（如图\ref{fig:demo_edit}），粘贴OpenAPI定义并选择认证方式。以NWS Weather API为例，其提供两个操作端点，分别用于获取经纬度对应的网格点与天气预报：
+用户首先通过图形界面配置所需API（图\ref{fig:demo_edit}），粘贴OpenAPI定义并选择认证方式。配置完成后，所有API在总览界面中可见（图\ref{fig:demo_table}），支持编辑、删除和重载操作。用户在主对话框中勾选相关API（图\ref{fig:demo_prompt}），并使用自然语言描述需求：\texttt{make a chatbot that can answer weather related questions and show dog images}。系统随即分析需求，自动规划任务并生成相应代码（图\ref{fig:demo_plan}）。
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_edit_modal.png}
-  \caption{添加NWS Weather API：通过粘贴OpenAPI规范定义并配置端点与认证方式}
+  \caption{添加NWS Weather API：粘贴OpenAPI规范定义并配置端点与认证方式}
   \label{fig:demo_edit}
 \end{figure}
-
-配置完成后，用户可在APIActions列表中启用或禁用对应API，系统支持随时编辑、删除、重载schema（如图\ref{fig:demo_table}）。
 
 \begin{figure}[htbp]
   \centering
@@ -276,14 +141,6 @@ bolt.SE的APIActions模块具有以下关键功能：
   \label{fig:demo_table}
 \end{figure}
 
-\subsection{自然语言触发任务规划与代码生成}
-
-完成API配置后，用户可在主对话框中勾选所需API（如图\ref{fig:demo_prompt}），并以自然语言输入构想，例如：
-
-\begin{quote}
-\texttt{make a chatbot that can answer weather related questions and show dog images}
-\end{quote}
-
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_prompt_tags.png}
@@ -291,22 +148,16 @@ bolt.SE的APIActions模块具有以下关键功能：
   \label{fig:demo_prompt}
 \end{figure}
 
-系统基于勾选的API及用户意图，自动规划任务、生成文件，并提示相关操作步骤。
-
-\subsection{代码结构与依赖初始化}
-
-如图\ref{fig:demo_plan}所示，bolt.SE自动列出开发计划并创建必要文件结构，同时生成项目依赖清单与安装命令。
-
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_plan_files.png}
-  \caption{系统生成项目结构与依赖安装命令，覆盖前端组件与服务调用逻辑}
+  \caption{系统生成项目结构与依赖安装命令，包含前端组件与服务调用逻辑}
   \label{fig:demo_plan}
 \end{figure}
 
-\subsection{交互效果与API调用验证}
+\subsection{功能验证与效果展示}
 
-在预览界面中，用户可实时测试机器人功能：
+在预览界面中，用户可验证机器人能否正确响应请求。如图\ref{fig:demo_dog}所示，用户请求查看狗狗图片时，系统调用The Dog API返回相关图片。图\ref{fig:demo_weather}展示用户询问天气情况时，系统识别意图并调用NWS Weather API提供实时天气信息。这些交互示例展示了APIActions与LLM的协同工作方式，系统能准确理解用户意图并将其转化为相应API调用，体现了API优先开发在LLM应用场景中的实际价值。
 
 \begin{figure}[htbp]
   \centering
@@ -321,5 +172,3 @@ bolt.SE的APIActions模块具有以下关键功能：
   \caption{询问天气时，系统识别意图并调用NWS Weather API提供实时天气信息}
   \label{fig:demo_weather}
 \end{figure}
-
-从图中可见，聊天机器人能准确识别用户意图，并将意图转化为对外部API的调用，展示了APIActions与LLM的协同优势。
