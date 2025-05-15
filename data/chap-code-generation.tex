@@ -1,81 +1,151 @@
 % !TeX root = ../thuthesis-example.tex
-\chapter{bolt.SE 介绍}
+\chapter{bolt.SE 系统架构与技术创新}
 
-本项目基于开源项目bolt.diy（以下简称bolt），在此基础上进行了多方面的优化和扩展。选择bolt作为基础平台的原因主要体现在以下几个方面：
+本章将详细介绍bolt.SE系统的整体架构、核心技术及创新点。bolt.SE基于开源项目bolt.diy构建，保留其核心优势的同时，引入多项技术创新以增强软件工程实践支持。本章首先介绍bolt.diy的基础架构与技术特点，随后重点阐述bolt.SE的创新模块及其在软件工程流程中的应用价值。
 
-\section{选择bolt的原因}
+\section{bolt.diy介绍}
+
+本项目基于开源项目bolt.diy，在此基础上进行了多方面的优化和扩展。选择bolt.diy作为基础平台的原因主要体现在以下几个方面：
 
 \begin{itemize}
-    \item \textbf{开源与扩展性}: bolt作为一个开源平台，具备高度的扩展性和灵活性，便于根据项目的需求进行定制化开发，适应各种软件工程实践的要求。
-    \item \textbf{多种大语言模型支持}: bolt支持多种大语言模型（LLM），如GPT-o3-mini、Claude 3.7 Sonnet等，且持续扩展对新模型的支持，这为代码生成提供了更多选择，极大地增强了系统的灵活性。
-    \item \textbf{代码生成能力}: bolt具备出色的代码生成能力，尤其擅长理解和感知大规模复杂软件项目的上下文信息，在解析代码库和管理项目结构方面表现卓越。
-    \item \textbf{WebContainer技术}: bolt使用WebContainer技术，使得代码能在浏览器中实时执行并预览，极大提升了开发的交互性和实时响应能力，便于开发者快速验证代码效果。
+    \item 开源与扩展性: bolt.diy作为开源平台，具备高度扩展性和灵活性，便于根据项目需求进行定制化开发，适应各种软件工程实践要求。
+    \item 多种大语言模型支持: bolt.diy支持多种大语言模型（LLM），如GPT-o3-mini、Claude 3.7 Sonnet等，并持续扩展对新模型的支持。
+    \item 代码生成能力: bolt.diy能够理解和感知大规模复杂软件项目的上下文信息，在解析代码库和管理项目结构方面表现出色。
+    \item WebContainer技术: bolt.diy使用WebContainer技术，使代码能在浏览器中实时执行并预览，提升了开发的交互性和实时响应能力，便于开发者快速验证代码效果。
 \end{itemize}
 
-\section{系统整体流程}
+\subsection{系统架构}
 
-bolt系统的流程图如图~\ref{fig:general_chat_sequence}所示。该图展示了从用户提交需求到最终生成并执行代码的完整流程。
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=1.0\linewidth]{general_chat_sequence.drawio.pdf}
-  \caption{bolt.SE 代码生成时序图}
-  \label{fig:general_chat_sequence}
-\end{figure}
-
-系统的整体流程包括以下几个关键步骤：
-\begin{itemize}
+bolt.diy系统的工作流程涉及多个核心组件的协同运作，如图~\ref{fig:bolt_sequence}灰色部分所示。整体流程包括以下几个关键步骤：
+\begin{enumerate}
     \item 用户通过UI界面输入需求，选择适当的大语言模型（LLM）。
     \item LLM生成自然语言响应，经过MessageParser模块解析为结构化XML格式。
     \item 生成的代码通过FileStore存储，并通过ActionRunner在WebContainer环境中执行。
     \item 执行结果通过ActionRunner反馈给用户，完成代码生成和执行过程。
-\end{itemize}
+\end{enumerate}
 
-其中，ActionRunner、FileStore 和 WebContainer 进行交互，WebContainer 提供了一个隔离、安全的运行环境，允许代码在浏览器中直接执行。WebContainer 的具体实现原理将在后续章节中详细介绍。
+其中，ActionRunner、FileStore和WebContainer进行交互，WebContainer提供隔离、安全的运行环境，允许代码在浏览器中直接执行。
 
-\section{UI与操作流程介绍}
+另外，由于所有代码生成过程本质上都表现为用户与大语言模型之间的交互对话，因此，整个项目的代码库实际上是一系列高度结构化的"对话记录"。利用LLM的长文本处理能力，bolt.diy能够将这些累积的对话历史完整地纳入模型的记忆上下文。这种设计使LLM不仅能基于当前用户输入生成代码，还能回顾并记忆历史生成的代码片段、开发者的设计决策以及代码库整体的架构约定。
 
-bolt提供了一个直观易用的用户界面（UI），用户可以通过该界面方便地输入需求、选择模型、查看代码生成结果并进行进一步编辑。
+\begin{figure}[htbp]
+  \makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{figures/bolt_sequence.pdf}}
+  \caption{bolt.SE系统架构图：显示bolt.diy基础流程（灰色区域）与bolt.SE创新模块（蓝色区域）的集成与交互}
+  \label{fig:bolt_sequence}
+\end{figure}
+% sequenceDiagram
+%     %% 使用不同颜色区分bolt.diy和bolt.SE的组件
+%     %% bolt.diy组件使用默认颜色，bolt.SE组件使用蓝色
+    
+%     %% 定义参与者和分组
+%     box 原始bolt.diy组件
+%     participant UI as 用户界面
+%     participant LLM as 大语言模型
+%     participant MP as MessageParser
+%     participant FS as FileStore
+%     participant AR as ActionRunner
+%     participant WC as WebContainer
+%     end
+    
+%     box 新增bolt.SE组件
+%     participant TDD as TDD模块
+%     participant API as API Actions模块
+%     participant MCP as MCP模块
+%     end
+    
+%     %% 标注整体流程区域
+%     rect rgb(240, 240, 240)
+%     note right of UI: bolt.diy基础流程
+    
+%     %% bolt.diy的标准流程
+%     UI->>+LLM: 1. 发送软件需求
+%     LLM->>+MP: 2. 生成XML结构化响应
+%     MP-->>-LLM: 解析完成
+%     LLM-->>-UI: 3. 返回自然语言回复
+    
+%     MP->>+FS: 4. 生成代码文件
+%     FS-->>-MP: 文件创建完成
+    
+%     MP->>+AR: 5. 生成执行脚本
+%     AR->>+WC: 6. 获取执行文件
+%     WC-->>-AR: 返回文件内容
+    
+%     AR->>+WC: 7. 执行命令
+%     WC-->>-AR: 返回执行结果
+%     AR-->>UI: 8. 返回执行结果
+%     end
+    
+%     %% bolt.SE扩展功能 - 测试驱动开发
+%     rect rgb(233, 244, 255)
+%     note right of UI: bolt.SE: 测试驱动开发流程
+    
+%     UI->>+TDD: 9. 创建测试用例
+%     TDD-->>-UI: 返回测试树结构
+    
+%     TDD->>LLM: 10. 注入测试约束上下文
+    
+%     AR->>+TDD: 11. 执行测试用例
+%     TDD->>WC: 运行测试
+%     WC-->>TDD: 返回测试结果
+    
+%     alt 测试失败
+%         TDD->>LLM: 12. 发送失败信息
+%         LLM->>FS: 13. 生成修复代码
+%         FS->>AR: 14. 执行修复
+%         AR->>TDD: 15. 重新测试
+%     end
+    
+%     TDD-->>-UI: 16. 展示测试结果
+%     end
+    
+%     %% bolt.SE扩展功能 - API优先开发
+%     rect rgb(233, 244, 255)
+%     note right of UI: bolt.SE: API优先开发流程
+    
+%     UI->>+API: 17. 选择/定义API
+%     API-->>-UI: 返回API上下文标签
+    
+%     API->>LLM: 18. 注入API描述上下文
+%     LLM->>FS: 19. 生成符合API的代码
+%     end
+    
+%     %% bolt.SE扩展功能 - MCP集成
+%     rect rgb(233, 244, 255)
+%     note right of UI: bolt.SE: MCP外部工具集成
+    
+%     UI->>+MCP: 20. 请求外部工具调用
+    
+%     MCP->>MCP: 21. 格式化工具调用请求
+%     MCP->>LLM: 22. 提供工具调用结果
+    
+%     alt 调用外部API
+%         MCP->>API: 23. 调用外部服务
+%         API-->>MCP: 返回API响应
+%     end
+    
+%     MCP-->>-UI: 24. 返回调用结果
+%     end
 
-\subsection{用户需求输入与模型选择}
+\subsection{用户界面}
 
-用户在UI的左侧输入自然语言描述软件功能需求。bolt平台支持多种大语言模型（如OpenAI、Anthropic、DeepSeek等），用户可以根据需求选择适合的模型，以优化代码生成效果。
+如图~\ref{fig:bolt_diy_example}所示，bolt.diy提供直观易用的用户界面，用户在UI左侧输入自然语言描述软件功能需求。bolt平台支持多种大语言模型（如OpenAI、Anthropic、DeepSeek等），用户可根据需求选择适合的模型，以优化代码生成效果。
 
-\subsection{代码生成与编辑}
+根据用户输入的需求，bolt.diy会调用选定的LLM生成代码，生成的代码在在线IDE中展示。用户可在IDE中进一步编辑、修改代码，并通过实时语法检查和错误提示功能及时发现问题。
 
-根据用户输入的需求，bolt会自动调用选定的LLM生成代码，生成的代码会在在线IDE中展示。用户可以在IDE中进一步编辑、修改代码，并通过实时语法检查和错误提示功能及时发现问题。
+WebContainer技术允许用户在浏览器中实时运行和预览生成的代码，开发者无需离开开发环境，即可直接验证代码的功能和效果。
 
-\subsection{实时预览与调试}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/bolt-diy-example.png}
+  \caption{bolt.diy用户界面示例}
+  \label{fig:bolt_diy_example}
+\end{figure}
 
-bolt的WebContainer技术允许用户在浏览器中实时运行和预览生成的代码，开发者无需离开开发环境，即可直接验证代码的功能和效果。
+\subsection{MessageParser}
 
-\section{LLM介绍}
+MessageParser是bolt.diy的核心组件，负责解析LLM生成的XML格式输出。LLM会生成结构化的XML响应，而MessageParser则识别和提取这些XML中的代码内容、文件路径、执行命令等元信息。
 
-大语言模型（LLM）在本项目中的核心作用是生成代码并持续记忆上下文信息。以下分别介绍LLM在本项目中的应用及其优势。
-
-\subsection{多LLM支持及其好处}
-
-bolt支持多种LLM的接入，包括GPT-o3-mini、Claude 3.7 Sonnet等，未来还将进一步扩展对新模型的支持。具体而言，bolt内部已对多种LLM提供商的API进行了封装，用户只需向各平台申请API Key，并配置在系统中，即可使用对应的模型。
-这一多模型支持的优势在于：
-\begin{itemize}
-    \item 用户可以根据具体的项目需求，选择最适合的模型，优化代码生成效果。
-    \item 通过灵活切换模型，能够适应不同的代码生成任务，如前端开发、后端开发等，提供更好的定制化能力。
-    \item 多模型支持减少对单一模型的依赖，避免出现由于某个模型的缺陷或更新导致的不可用情况。
-\end{itemize}
-
-\subsection{大语言模型的超长文本处理能力}
-
-传统的代码生成工具，如GitHub Copilot、Cursor和DeepSeek等，通常在生成代码时只关注当前输入的单一上下文片段或局限于当前编辑区域附近的上下文。这导致当代码库规模增大时，生成的代码可能缺乏一致性，或忽略已有代码库的风格和约定。
-
-而在bolt平台中，由于所有的代码生成过程本质上都表现为用户与大语言模型之间一来一往的交互对话，因此，整个项目的代码库实际上就是一系列高度结构化的"对话记录"。利用LLM的超长文本处理能力，bolt能够将这些累积的对话历史完整地纳入模型的记忆上下文。这种独特的设计使LLM不仅能基于当前用户输入生成代码，还能够回顾并记忆历史生成的代码片段、开发者的设计决策以及代码库整体的架构约定。
-
-\section{MessageParser}
-
-MessageParser是系统中的一个关键模块，负责将大语言模型（LLM）生成的自然语言响应解析为结构化的数据格式，通常是XML格式。该XML格式不仅包含生成的代码，还包括后续的操作步骤、文件路径等信息，能够高效地支持后续的代码生成和执行等任务。下面以一个创建JavaScript函数的例子来详细说明XML结构的组成及其各标签的功能。
-
-\subsection{Prompt定义的XML结构}
-
-为了便于MessageParser解析和处理LLM的输出，我们设计了一个特定的XML结构。该结构能够清晰地表达每一步生成的代码和执行的操作。以下是一个例子，展示了如何通过XML结构描述一个创建JavaScript函数的过程：
+以下示例展示了一个典型的LLM生成的XML结构，描述创建JavaScript阶乘函数的完整过程：
 
 \begin{minted}{xml}
 <example>
@@ -83,7 +153,7 @@ MessageParser是系统中的一个关键模块，负责将大语言模型（LLM�
     Create a JS function to compute factorial.
   </user_query>
   <assistant_response>
-    Certainly, Let’s create a factorial function.
+    Certainly, Let's create a factorial function.
     <boltArtifact id="factorial-function" 
                   title="JavaScript Factorial Function">
       <boltAction type="file" filePath="index.js">
@@ -100,73 +170,62 @@ MessageParser是系统中的一个关键模块，负责将大语言模型（LLM�
 </example>
 \end{minted}
 
-\subsubsection{XML标签说明}
-
-这个XML结构中，主要涉及以下几个标签和子标签：
+在这个XML结构中，主要包含以下几个标签：
 
 \begin{itemize}
-    \item \textbf{\textless user\_query\textgreater}: 该标签包含用户输入的自然语言查询。在本例中，用户请求创建一个计算阶乘的JavaScript函数。
-    
-    \item \textbf{\textless assistant\_response\textgreater}: 该标签包含LLM的自然语言响应。它不仅包括对用户查询的文本回复，还包括后续的操作步骤，通常是通过`boltArtifact`和`boltAction`来描述代码生成和执行的过程。
-    
-    \item \textbf{\textless boltArtifact\textgreater}: 这是一个容器标签，用于表示一个生成的代码单元或"工件"。在本例中，`boltArtifact`表示生成的JavaScript阶乘函数。它具有两个重要的属性：
+    \item \textless user\_query\textgreater：包含用户的原始自然语言请求，本例中为创建计算阶乘的JavaScript函数。
+    \item \textless assistant\_response\textgreater：包含LLM的完整响应，包括文本回复和后续操作步骤，通常通过嵌套的`boltArtifact`和`boltAction`标签表示。
+    \item \textless boltArtifact\textgreater：作为容器标签，表示一个完整的代码生成单元或"工件"，具有唯一标识符和描述性标题。
+    \item \textless boltAction\textgreater：表示具体操作步骤，根据type属性的不同可执行不同类型的操作，例如：
     \begin{itemize}
-        \item \textbf{id}: 唯一标识符，用于引用和管理生成的代码单元。
-        \item \textbf{title}: 标题或描述，帮助用户理解该工件的内容。在此例中，标题是"JavaScript Factorial Function"。
-    \end{itemize}
-    
-    \item \textbf{\textless boltAction\textgreater}: 这是描述具体操作的标签，它包含了代码生成、文件操作和执行指令等步骤。每个`boltAction`代表一个单独的操作，可以是文件生成、命令执行等。在本例中，`boltAction`有两种类型：
-    \begin{itemize}
-        \item \textbf{type="file"}: 表示这是一个文件操作，文件内容就是生成的JavaScript函数。`filePath`属性指定了文件的路径，这里是`index.js`，它是包含阶乘函数的文件。
-        \item \textbf{type="shell"}: 表示这是一个命令行操作，`boltAction`标签中的内容是一个shell命令。在本例中，命令是`node index.js`，表示在命令行中运行生成的JavaScript文件。
+        \item type="file"：创建或修改文件，其中filePath属性指定目标文件路径，标签内容为文件内容。
+        \item type="shell"：执行命令行操作，标签内容为需执行的shell命令。
     \end{itemize}
 \end{itemize}
 
-\subsubsection{如何处理XML结构}
+MessageParser在运行过程中解析LLM输出的文本内容，识别其中的结构化信息。每个操作步骤被封装为`boltAction`，相关操作组合为`boltArtifact`，最终形成完整的代码生成工作流。系统随后根据解析结果，通过FileStore存储生成的代码文件，并由ActionRunner执行相应的命令，实现从自然语言到可执行代码的转换过程。
 
-在实际应用中，MessageParser会根据LLM的输出将自然语言响应转换为这种XML结构。每个操作步骤都会被封装成`boltAction`，而所有的操作步骤将组成一个`boltArtifact`，最终这些`boltArtifact`构成了完整的代码生成流程。
+\subsection{WebContainer技术}
 
-1. 用户的查询会被传递给LLM，LLM解析查询并生成自然语言响应（如上例中的JavaScript代码）。
-2. MessageParser接收LLM的响应，并将其转换为结构化的XML数据，其中包含了生成的代码（如`factorial`函数）及相关操作（如创建文件和执行代码）。
-3. 系统根据这些`boltArtifact`和`boltAction`执行相应的操作，如创建文件、执行命令等。
+WebContainer是bolt.diy的核心技术之一，由StackBlitz开发的基于WebAssembly的微型操作系统。它通过将Node.js编译为WebAssembly，实现了在浏览器中原生运行Node.js环境的能力。
 
-\subsection{结构化数据的优势}
+在技术实现上，WebContainer利用WebAssembly技术在浏览器中模拟完整的操作系统环境，包括文件系统和进程管理等功能。这使开发者能够在浏览器中执行各种命令，如\texttt{npm install}、\texttt{node index.js}等，实现完整的开发工作流程。
 
-通过将LLM生成的自然语言响应转化为结构化的XML格式，MessageParser能够高效地将生成的代码和操作步骤传递给后续模块，如FileStore和ActionRunner。这种结构化方式使得系统能够：
+在bolt.diy中，WebContainer主要用于提供安全、隔离的代码运行环境。生成的代码通过FileStore存储在WebContainer的虚拟文件系统中，并由ActionRunner在该环境中执行。执行结果随后返回给用户，形成完整的代码生成-执行-反馈循环。
+
+\section{bolt.SE的技术创新与改进}
+
+基于bolt.diy的原有架构，bolt.SE引入了多项技术改进，重点强化了系统在现代软件工程实践中的适应性。
+
+如图~\ref{fig:bolt_sequence}蓝色部分所示，bolt.SE基于此核心流程，增加了四个关键模块：测试驱动开发（TDD）模块负责测试用例管理与执行；API优先开发模块处理API定义与集成；模型上下文协议（MCP）模块提供外部工具调用能力。
+
+\subsection{API优先开发模块}
+API优先（API-First）是现代软件开发中的重要方法，强调在实现具体功能前先设计和定义API接口。bolt.SE在此方面的创新体现为构建了基于OpenAPI规范的API定义与管理系统。
+
+该模块允许用户通过界面定义API规范，系统随后将这些规范转化为LLM可理解的结构化指导信息。基于这些信息，LLM能够生成符合预定义API规范的代码实现，确保生成代码与系统整体架构的一致性。
+
+在具体实现上，bolt.SE开发了全新的APIActions组件，包括：
 \begin{itemize}
-    \item 高效地管理和执行多个代码生成和执行任务。
-    \item 便于扩展和定制化，可以根据具体需求调整`boltAction`的类型和操作。
-    \item 提供清晰的反馈和调试信息，帮助开发者快速定位问题。
+  \item \texttt{ApiActionsContextTags}：显示聊天界面中选中的API标签
+  \item \texttt{ApiActionsModal}：管理API的主要模态窗口
+  \item \texttt{EditApiActionsModal}：创建和编辑API的编辑器界面
 \end{itemize}
 
-总之，XML格式不仅是LLM与系统之间的桥梁，还能够促进后续操作的自动化和可管理性，从而提升整个系统的效率和可扩展性。
+这些组件与bolt.diy的文件存储和对话管理系统整合，扩展了原有框架的功能边界。例如，APIActions模块在用户选择API时，将API描述信息压缩，仅保留端点信息与参数定义的核心要素，相比原始描述节省token消耗，优化了bolt.diy的上下文管理机制。
 
-\section{WebContainer简介}
+\subsection{测试驱动开发（TDD）模块}
 
-WebContainer 是由 StackBlitz 开发的基于 WebAssembly 的微型操作系统，旨在在浏览器中原生运行 Node.js 环境。它通过将 Node.js 编译为 WebAssembly（WASM），使开发者能够在浏览器中直接执行服务器端代码，如运行 Node.js 服务器、安装 npm 包等。 
+测试驱动开发是一种强调"测试先行"的软件开发方法。bolt.SE通过构建TDD模块，将这一理念与LLM代码生成相结合，形成了一套完整的测试驱动型代码生成流程。
 
-\subsection{实现原理}
+TDD模块与bolt.diy的WebContainer集成，利用其JavaScript执行能力，实现了测试用例的实时运行与验证。当测试失败时，系统自动将错误信息回传给LLM，引导其进行针对性修复，形成完整的"红-绿-重构"循环。
 
-WebContainer 的核心在于利用 WebAssembly 技术，将 Node.js 及相关工具链编译为可在浏览器中运行的格式。具体而言，它在浏览器中模拟了一个完整的操作系统环境，包括文件系统和进程管理等功能。这使得开发者可以在浏览器中执行诸如 \texttt{npm install}、\texttt{node index.js} 等命令，实现完整的开发工作流程。 
+在bolt.diy的设计中，代码生成主要依赖自然语言描述，缺乏结构化的验证机制。bolt.SE的TDD模块在此基础上引入了基于Jest的测试框架集成，实现了测试用例的创建、管理与执行，提升了生成代码的可靠性与质量。
 
-\subsection{在 bolt 系统中的应用}
+\subsection{模型上下文协议（MCP）模块}
 
-在 bolt 系统中，WebContainer 被用于提供一个安全、隔离的运行环境，以支持代码的生成和执行：
+bolt.SE引入了模型上下文协议（Model Context Protocol, MCP），实现LLM与外部工具和数据源的交互。该协议定义了一套标准化接口，使LLM能够安全地调用外部功能。
 
-\begin{enumerate}
+在技术实现上，MCP模块采用模块化架构设计，支持多种传输方式（如stdio、HTTP SSE）和服务类型。这种灵活性使系统能够适应从本地文件访问到远程服务调用的广泛场景，增强了LLM的功能边界。
 
-    \item 代码存储：生成的代码通过 FileStore 模块存储在 WebContainer 的虚拟文件系统中，确保代码资产的安全管理和版本控制。
+bolt.diy原有架构中，LLM主要通过生成XML结构化指令调用系统内置功能，如文件创建和命令执行。bolt.SE的MCP模块扩展了这一机制，实现了与外部工具和服务的标准化集成。MCP为每个外部工具定义了JSON Schema描述，使LLM能够理解工具功能并正确构造调用参数。
 
-    \item 代码执行：ActionRunner 模块从 FileStore 获取代码，并在 WebContainer 环境中执行。由于 WebContainer 提供了完整的 Node.js 运行时，代码可以在其中被直接运行。
-
-    \item 结果反馈：执行结果通过 ActionRunner 返回给用户，并进行渲染。
-\end{enumerate}
-
-通过上述流程，bolt 系统利用 WebContainer 的能力，实现了在浏览器中直接进行代码的生成、存储、执行和反馈，使使用者能够实时看到代码的执行结果，极大地提升了开发效率和用户体验。 
-
-TODO: 截图演示原始bolt.diy
-
-\section{改进}
-
-本项目在bolt的基础上，进行了以下改进：
-TODO

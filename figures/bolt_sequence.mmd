@@ -1,0 +1,92 @@
+sequenceDiagram
+    %% 使用不同颜色区分bolt.diy和bolt.SE的组件
+    %% bolt.diy组件使用默认颜色，bolt.SE组件使用蓝色
+    
+    %% 定义参与者和分组
+    box 原始bolt.diy组件
+    participant UI as 用户界面
+    participant LLM as 大语言模型
+    participant MP as MessageParser
+    participant FS as FileStore
+    participant AR as ActionRunner
+    participant WC as WebContainer
+    end
+    
+    box 新增bolt.SE组件
+    participant TDD as TDD模块
+    participant API as API Actions模块
+    participant MCP as MCP模块
+    end
+    
+    %% 标注整体流程区域
+    rect rgb(240, 240, 240)
+    note right of UI: bolt.diy基础流程
+    
+    %% bolt.diy的标准流程
+    UI->>+LLM: 1. 发送软件需求
+    LLM->>+MP: 2. 生成XML结构化响应
+    MP-->>-LLM: 解析完成
+    LLM-->>-UI: 3. 返回自然语言回复
+    
+    MP->>+FS: 4. 生成代码文件
+    FS-->>-MP: 文件创建完成
+    
+    MP->>+AR: 5. 生成执行脚本
+    AR->>+WC: 6. 获取执行文件
+    WC-->>-AR: 返回文件内容
+    
+    AR->>+WC: 7. 执行命令
+    WC-->>-AR: 返回执行结果
+    AR-->>UI: 8. 返回执行结果
+    end
+    
+    %% bolt.SE扩展功能 - 测试驱动开发
+    rect rgb(233, 244, 255)
+    note right of UI: bolt.SE: 测试驱动开发流程
+    
+    UI->>+TDD: 9. 创建测试用例
+    TDD-->>-UI: 返回测试树结构
+    
+    TDD->>LLM: 10. 注入测试约束上下文
+    
+    AR->>+TDD: 11. 执行测试用例
+    TDD->>WC: 运行测试
+    WC-->>TDD: 返回测试结果
+    
+    alt 测试失败
+        TDD->>LLM: 12. 发送失败信息
+        LLM->>FS: 13. 生成修复代码
+        FS->>AR: 14. 执行修复
+        AR->>TDD: 15. 重新测试
+    end
+    
+    TDD-->>-UI: 16. 展示测试结果
+    end
+    
+    %% bolt.SE扩展功能 - API优先开发
+    rect rgb(233, 244, 255)
+    note right of UI: bolt.SE: API优先开发流程
+    
+    UI->>+API: 17. 选择/定义API
+    API-->>-UI: 返回API上下文标签
+    
+    API->>LLM: 18. 注入API描述上下文
+    LLM->>FS: 19. 生成符合API的代码
+    end
+    
+    %% bolt.SE扩展功能 - MCP集成
+    rect rgb(233, 244, 255)
+    note right of UI: bolt.SE: MCP外部工具集成
+    
+    UI->>+MCP: 20. 请求外部工具调用
+    
+    MCP->>MCP: 21. 格式化工具调用请求
+    MCP->>LLM: 22. 提供工具调用结果
+    
+    alt 调用外部API
+        MCP->>API: 23. 调用外部服务
+        API-->>MCP: 返回API响应
+    end
+    
+    MCP-->>-UI: 24. 返回调用结果
+    end
