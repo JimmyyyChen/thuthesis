@@ -7,65 +7,17 @@
 
 bolt.SE的测试模块是对TDD理念的工程化实现，使开发者能创建、管理测试用例，并引导大语言模型（LLM）生成满足这些测试要求的代码。本章分析TDD概念、方法论价值及bolt.SE的测试功能技术实现。
 
-\section{测试驱动开发的概念与意义}
+\section{测试驱动开发对bolt.SE的意义}
 
-\subsection{TDD在软件工程中的优势}
-测试驱动开发为软件工程带来了以下关键优势：
+在大型语言模型驱动的软件开发中，测试驱动方法具有特殊价值。测试用例为LLM提供结构化需求表达，降低需求理解的歧义性，实现需求形式化。通过明确定义预期行为，测试还为LLM提供具体目标，有效限定代码生成的解空间。严格的测试约束能够降低LLM生成错误或不切实际代码的风险，确保输出符合验证逻辑的结果。测试机制提供客观验证标准，保证LLM生成的代码不仅表面合理，更能正确运行。同时，测试结果为LLM提供结构化反馈，引导其精确改进代码缺陷，促进代码质量的持续优化。
 
-\begin{enumerate}
-  \item \textbf{设计优先}：TDD驱使开发者在实现前思考接口设计与行为规范，促成更清晰的模块化结构。
-  
-  \item \textbf{快速反馈}：代码更改后立即运行测试，提供即时反馈，使问题在早期就能被发现。
-  
-  \item \textbf{回归保障}：完整测试套件构成代码重构与功能迭代的安全网，减少变更引入缺陷的风险。
-  
-  \item \textbf{活文档效应}：测试代码准确记录系统预期行为，形成自动与代码同步更新的技术文档。
-  
-  \item \textbf{聚焦实现}：明确的测试目标减少了开发过程中的决策疲劳，避免过度工程和不必要的复杂性。
-\end{enumerate}
+此外，TDD在传统软件工程中的优势同样适用于LLM驱动开发：促进模块化设计、提供快速反馈、确保回归安全、形成活文档并聚焦实现目标。bolt.SE将测试代码集成至对话上下文，实现了LLM与测试用例的协同工作模式，既保留了LLM的生成灵活性，又引入了软件工程的严谨验证机制。
 
-在bolt.SE这类开发平台中，结构化测试定义与自动化执行进一步增强了这些优势，优化开发流程并提高代码质量。
+\section{bolt.SE中的Jest测试框架应用}
 
-\subsection{TDD对LLM驱动开发的价值}
-在大型语言模型驱动的软件开发中，测试驱动方法具有特殊价值\cite{Mathews2024}：
+bolt.SE选择Jest作为核心测试框架，主要看中其在前端开发生态中的主流地位。由Facebook开发的Jest提供了零配置的快速部署体验，开发者只需安装依赖即可开始编写测试，无需繁琐的环境配置\cite{Jest2023}。其声明式API使测试代码结构清晰，易于LLM理解和生成，而丰富的断言器与快照测试功能则为各类应用场景提供了验证支持。
 
-\begin{enumerate}
-  \item \textbf{需求形式化}：测试用例为LLM提供结构化需求表达，降低需求理解的歧义性。
-  
-  \item \textbf{约束生成空间}：测试明确定义预期行为，为LLM提供具体目标，限定代码生成的解空间。
-  
-  \item \textbf{控制生成质量}：严格的测试约束降低LLM生成错误或不切实际代码的风险，强制输出需符合验证逻辑。
-  
-  \item \textbf{验证生成结果}：测试提供客观验证机制，确保LLM生成的代码能正确运行而非仅表面合理。
-  
-  \item \textbf{支持持续优化}：测试结果为LLM提供结构化反馈，引导其精确改进代码缺陷。
-\end{enumerate}
-
-bolt.SE将测试代码集成至对话上下文，实现了LLM与测试用例的协同工作模式。这种方法既保留了LLM的生成灵活性，又引入了软件工程的严谨验证机制。
-
-\section{Jest测试框架与TDD实践}
-
-Jest是Facebook开发的JavaScript测试框架，以简洁易用著称，已成为前端测试领域的主流选择\cite{Jest2023}。bolt.SE采用Jest作为测试功能核心框架，并针对TDD工作流进行了优化。
-
-\subsection{Jest测试框架概述}
-
-Jest提供了全面的测试工具集，具备以下核心特性：
-
-\begin{enumerate}
-  \item \textbf{零配置测试环境}：内置断言库、测试运行器和模拟工具，最小化配置开销。
-  
-  \item \textbf{声明式测试API}：通过\texttt{describe}、\texttt{it}/\texttt{test}和\texttt{expect}等函数构建清晰、易读的测试结构。
-  
-  \item \textbf{快照测试机制}：支持UI组件和数据结构的版本比对，简化回归测试流程。
-  
-  \item \textbf{多样化断言器}：提供丰富的匹配器，适应不同测试场景需求。
-  
-  \item \textbf{并行执行能力}：默认并行运行测试，优化执行效率。
-  
-  \item \textbf{覆盖率分析}：内置代码覆盖率统计与可视化报告。
-\end{enumerate}
-
-在bolt.SE中，Jest测试通常采用如下结构：
+Jest测试在bolt.SE中采用直观的结构组织：通过\texttt{describe}块定义测试套件，用\texttt{test}/\texttt{it}函数声明测试用例，并使用\texttt{expect}配合各类匹配器表达验证条件，如下所示：
 
 \begin{minted}{javascript}
 // 测试套件
@@ -81,215 +33,133 @@ describe('Calculator', () => {
 });
 \end{minted}
 
-bolt.SE测试模块解析此结构，提取测试套件与用例信息，并将其转化为LLM可理解的约束条件。
+bolt.SE测试模块能解析此结构，提取测试套件和用例的层次关系，构建测试树模型。系统将测试信息转换为LLM可理解的约束条件，在对话启动时注入上下文，引导模型生成符合测试要求的代码。这种测试驱动的开发工作流程形成完整循环：从测试定义、结构提取、上下文注入，到代码生成、验证与迭代优化，有效融合了TDD方法论与AI辅助开发的优势。
 
-\subsection{TDD工作流程}
+\section{bolt.SE中的测试功能实现}
 
-bolt.SE环境中的TDD工作流程整合了传统测试驱动与AI辅助开发的优势：
+bolt.SE通过测试功能模块，使用户能够定义、管理和应用测试用例，同时使LLM能理解并生成符合测试要求的代码。图\ref{fig:test_sequence}展示了测试功能的完整流程，包括用户测试定义、使用及验证的完整流程与跨组件信息传递机制。
 
-\begin{enumerate}
-  \item \textbf{测试定义}：开发者在专用编辑器中创建测试代码，明确定义功能行为规范。
-  
-  \item \textbf{结构提取}：系统自动解析测试代码，构建测试套件和用例的树形结构表示。
-  
-  \item \textbf{上下文注入}：新建对话时，系统将测试代码作为上下文信息传递给LLM。
-  
-  \item \textbf{代码生成}：LLM基于测试约束理解需求，生成满足测试条件的实现代码。
-  
-  \item \textbf{测试验证}：开发者执行测试，验证生成代码是否符合预期行为。
-  
-  \item \textbf{迭代更新}：根据测试结果调整代码或测试用例，形成开发迭代环。
-\end{enumerate}
-
-此工作流程将TDD的规范性与AI生成的高效性结合，实现了更精确、高效的开发模式。
-
-\section{bolt.SE测试功能技术实现}
-
-bolt.SE将TDD原则融入系统架构，通过模块化设计实现了测试驱动的AI辅助开发流程。本节分析其技术实现，包括架构设计、核心组件和功能机制。
-
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/bolt_test_sequence.pdf}
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{figures/bolt_test_sequence.pdf}}
   \caption{测试功能流程图：展示用户测试定义、使用及验证的完整流程与跨组件信息传递机制}
   \label{fig:test_sequence}
 \end{figure}
 
-\subsection{架构设计与模块构成}
+bolt.SE测试系统采用多层次技术架构优化代码测试流程。系统基于正则表达式精确解析\texttt{describe}和\texttt{it}/\texttt{test}函数调用，构建结构化测试表示。此解析机制将非结构化测试代码转换为层次化数据模型，为后续操作提供基础。测试界面实现了高效导航机制，通过树形结构展示测试组织，并支持测试项与代码区域的精确定位与高亮显示，降低认知负荷。测试代码在系统启动时被转换为形式化约束条件，通过结构化描述明确功能预期，提供精确的功能边界定义。这种方法显著减少了需求的歧义性，使代码能够直接针对具体测试条件进行验证。系统还包含环境配置自动化能力，自动添加必要依赖和测试脚本，确保测试环境一致性。当执行测试失败时，系统将错误信息结构化并转换为具体修复指导，形成完整的反馈闭环，驱动代码迭代优化。这种严格约束与自动反馈的组合保证了代码质量与可靠性。
 
 bolt.SE测试系统采用组件化架构，主要包含以下核心模块：
 
-\begin{enumerate}
-  \item \textbf{用户界面层}：
+\begin{itemize}
+  \item 用户界面层：
     \begin{itemize}
       \item \texttt{AddTestModal}：测试管理的主入口，支持测试创建与编辑
       \item \texttt{TestEditor}：代码编辑器组件，提供语法高亮与结构可视化
       \item \texttt{TestStructure}：测试树渲染组件，展示测试套件与用例的层次关系
     \end{itemize}
   
-  \item \textbf{数据处理层}：
+  \item 数据处理层：
     \begin{itemize}
       \item \texttt{chatStore}：管理当前会话的测试代码集合
       \item \texttt{IndexedDB}：持久化存储测试定义，支持跨会话访问
     \end{itemize}
   
-  \item \textbf{测试执行层}：
+  \item 测试执行层：
     \begin{itemize}
       \item \texttt{Workbench}：提供测试运行环境与命令执行
       \item \texttt{ActionRunner}：负责测试调度与结果采集
     \end{itemize}
   
-  \item \textbf{AI交互层}：处理测试代码与LLM的信息交换与指令生成
-\end{enumerate}
-
-如图\ref{fig:test_sequence}所示，测试流程分为定义、使用和验证三个主要阶段，构成完整的测试生命周期管理。
+  \item AI交互层：处理测试代码与LLM的信息交换与指令生成
+\end{itemize}
 
 bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所示：
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/bolt_test_class.pdf}
+  \makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{figures/bolt_test_class.pdf}}
   \caption{测试数据模型类图：描述测试定义的核心数据结构及关系，包含测试代码项、测试用例与测试套件的层次组织}
   \label{fig:test_class}
 \end{figure}
 
-核心数据结构包括：
+测试系统的核心数据结构包括：
 
-\begin{enumerate}
-  \item \textbf{TestCodeItem}：测试文件实体，包含唯一标识符、名称与代码内容。
+\begin{itemize}
+  \item TestCodeItem：测试文件实体，包含唯一标识符、名称与代码内容。
   
-  \item \textbf{TestItem}：测试项基础接口，定义共用的类型与名称属性。
+  \item TestItem：测试项基础接口，定义共用的类型与名称属性。
   
-  \item \textbf{TestCase}：具体测试用例，标识类型为"test"，记录代码位置信息。
+  \item TestCase：具体测试用例，标识类型为"test"，记录代码位置信息。
   
-  \item \textbf{TestSuite}：测试套件，标识类型为"suite"，包含子测试项集合与展开状态。
-\end{enumerate}
-
-系统实现了以下关键功能：
-
-\begin{enumerate}
-  \item \textbf{测试解析}：解析Jest测试代码，提取测试结构并构建层次化表示。
-  
-  \item \textbf{结构编辑}：提供专用编辑界面，支持测试代码创建与修改。
-  
-  \item \textbf{上下文集成}：将测试转换为文件操作指令，注入对话上下文。
-  
-  \item \textbf{执行验证}：通过Workbench提供测试执行环境，验证代码符合性。
-  
-  \item \textbf{结果反馈}：收集并可视化测试执行结果，支持问题定位与修复。
-\end{enumerate}
-
-\subsection{测试解析与可视化机制}
-
-bolt.SE实现了高效的测试代码解析与可视化机制：
-
-\begin{enumerate}
-  \item \textbf{语法分析}：采用正则表达式识别\texttt{describe}和\texttt{it}/\texttt{test}函数调用，提取测试结构。
-  
-  \item \textbf{树形建模}：基于代码的语法嵌套关系，构建测试的层次结构模型。
-  
-  \item \textbf{位置映射}：记录每个测试用例在源码中的行号范围，支持双向定位。
-  
-  \item \textbf{交互式视图}：提供可折叠的测试树结构，支持灵活导航与管理。
-  
-  \item \textbf{同步高亮}：点击测试项时自动定位并高亮相应代码区域。
-\end{enumerate}
-
-这些机制显著提升了测试代码的可读性与可管理性，简化了复杂测试套件的维护工作。
-
-\subsection{测试与LLM协同机制}
-
-bolt.SE创新地实现了测试与LLM的协同工作机制：
-
-\begin{enumerate}
-  \item \textbf{上下文嵌入}：启动对话时，系统将测试代码转换为结构化指令注入对话上下文。
-  
-  \item \textbf{行为引导}：生成专门的指导信息，明确告知LLM需基于测试生成代码及相关环境配置。
-  
-  \item \textbf{环境配置}：指导LLM添加必要依赖和测试脚本，自动构建测试环境。
-  
-  \item \textbf{验证机制}：要求在功能代码完成后立即执行测试，确保符合预期行为。
-  
-  \item \textbf{修复循环}：测试失败时将错误信息回传给LLM，引导其进行针对性修复。
-\end{enumerate}
-
-这种协同机制使LLM能够理解并遵循TDD原则，在严格约束下生成高质量代码。
+  \item TestSuite：测试套件，标识类型为"suite"，包含子测试项集合与展开状态。
+\end{itemize}
 
 \section{实例应用场景}
 \label{sec:tdd-example}
 
 本节通过JavaScript计算器的完整开发流程，展示bolt.SE中基于"红–绿–重构"循环的测试驱动开发过程及LLM参与的自动修复机制。
 
-\subsection{插入Jest测试代码与需求声明}
+在测试驱动开发的起始阶段，开发者首先通过AddTestModal组件创建测试代码，如图\ref{fig:tdd_add_test}所示，系统解析测试结构并以树形展示，确定开发任务范围：
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/add_test_modal.png}
   \caption{在AddTestModal中粘贴\texttt{calculator\_functions.test.js}，系统解析出\textit{Calculator Functions}测试套件与12条断言，并以树形结构展示}
   \label{fig:tdd_add_test}
 \end{figure}
 
-开发者将覆盖基本算术功能的测试用例导入系统，bolt.SE随即：
+开发者随后在聊天窗口输入简洁需求"Build a calculator"，系统自动注入测试文件与指导语，为LLM提供明确功能规格，如图\ref{fig:tdd_prompt}所示：
 
-\begin{enumerate}
-  \item 解析\verb|describe|与\verb|test|调用，构建测试树结构；
-  \item 将测试文件保存至项目目录并持久化存储；
-  \item 在对话上下文中注册该文件，为后续交互做准备。
-\end{enumerate}
-
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/calculator_prompt.png}
   \caption{开发者在聊天窗口输入"Build a calculator"的简洁需求，系统自动注入测试文件与指导语，为LLM提供明确功能规格}
   \label{fig:tdd_prompt}
 \end{figure}
 
-\subsection{首次执行——绿灯}
+完成测试定义后，LLM分析测试规格并生成相应实现，包括四个算术函数与测试配置。测试执行结果显示全部通过（图\ref{fig:tdd_green_initial}），表明当前实现符合测试规格要求：
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/green_pass_initial.png}
   \caption{LLM基于测试用例生成实现代码，运行测试后显示12条断言全部通过}
   \label{fig:tdd_green_initial}
 \end{figure}
 
-LLM分析测试规格后生成相应实现，包括四个算术函数与测试配置。测试执行结果显示全部通过，表明当前实现符合测试规格要求。
+为演示迭代修复流程，开发者修改一条加法测试断言为\verb|expect(add(2, 3)).toBe(0);|，相当于引入"2+3应等于0"的特殊要求。执行测试后，系统进入红灯阶段（图\ref{fig:tdd_red}）：
 
-\subsection{引入红灯：规格变更导致测试失败}
-
-为演示迭代修复流程，开发者修改一条加法测试断言为\verb|expect(add(2, 3)).toBe(0);|，相当于引入"2+3应等于0"的特殊要求。
-
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/test_edit_fail.png}
   \caption{修改测试断言后执行测试，出现一条失败记录，系统进入红灯阶段}
   \label{fig:tdd_red}
 \end{figure}
 
-\subsection{模型修复——恢复绿灯}
+系统将测试失败信息传递给LLM，模型识别出需要对特定输入做特殊处理，并生成相应补丁代码（图\ref{fig:tdd_fix}）：
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/fix_suggestion.png}
   \caption{系统将测试失败信息传递给LLM，模型识别出\texttt{add}函数需针对(2,3)输入做特殊处理，并生成相应补丁代码}
   \label{fig:tdd_fix}
 \end{figure}
 
-LLM根据失败信息分析出需要在\texttt{add}函数中添加特殊处理逻辑，生成的补丁代码保持其他功能不变。应用补丁后再次执行测试，所有断言重新通过，恢复绿灯状态。
+应用补丁后再次执行测试，所有断言重新通过，恢复绿灯状态（图\ref{fig:tdd_green_final}）：
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/green_pass_final.png}
   \caption{补丁应用后测试套件重新通过}
   \label{fig:tdd_green_final}
 \end{figure}
 
-\subsection{重构与可视化预览}
+在测试保障下，开发者可以安全地进行代码优化与界面改进。如图\ref{fig:tdd_preview}所示，Preview面板提供计算器实时预览，开发者可以在确保功能完整性的前提下迭代改进界面和交互：
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/preview_ui.png}
   \caption{Preview面板提供计算器实时预览。开发者可进行代码重构与优化，测试套件确保功能完整性不受影响}
   \label{fig:tdd_preview}
 \end{figure}
 
-开发者可在测试保障下安全地进行代码优化与界面改进。持续运行测试套件确保每次重构都不会破坏既定功能，实现代码质量与可维护性的同步提升。
+持续运行测试套件确保每次重构都不会破坏既定功能，实现代码质量与可维护性的同步提升。这个完整流程展示了bolt.SE测试模块如何将TDD原则与LLM辅助开发有机结合，形成高效、可靠的软件开发模式。

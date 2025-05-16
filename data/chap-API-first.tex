@@ -80,7 +80,7 @@ bolt.SE的APIActions模块解析这类OpenAPI定义，提取API端点和操作�
 \section{bolt.SE中的APIActions实现}
 bolt.SE通过APIActions模块，使用户能够定义、管理和应用外部API，同时使LLM能理解并调用这些API，实现功能扩展和技术集成。图\ref{fig:api_workflow}展示了完整的API使用工作流程，包括用户创建、编辑和使用API的流程，以及API信息在系统各组件间的传递方式。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{figures/api_workflow.pdf}}
   \caption{API使用工作流程图：展示用户创建、编辑和使用API的完整流程，以及API信息在系统各组件间的传递方式}
   \label{fig:api_workflow}
@@ -88,7 +88,7 @@ bolt.SE通过APIActions模块，使用户能够定义、管理和应用外部API
 
 APIActions是bolt.SE中实现API优先开发的核心功能模块，为LLM提供识别、理解和调用外部API的能力，同时优化token使用效率。该模块基于结构化数据模型设计，通过系统化的类结构定义API信息，实现从规范解析到功能调用的完整流程。图\ref{fig:api_actions_class}展示了APIActions的数据模型类图，描述了系统如何组织和管理API定义。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/api_actions_class.pdf}
   \caption{API数据模型类图：描述系统中API定义的核心数据结构及其关系，包括API操作、认证方式和存储管理}
@@ -127,28 +127,28 @@ APIActions通过以下几种方式优化了LLM应用效率：
 
 用户首先通过图形界面配置所需API（图\ref{fig:demo_edit}），粘贴OpenAPI定义并选择认证方式。配置完成后，所有API在总览界面中可见（图\ref{fig:demo_table}），支持编辑、删除和重载操作。用户在主对话框中勾选相关API（图\ref{fig:demo_prompt}），并使用自然语言描述需求：\texttt{make a chatbot that can answer weather related questions and show dog images}。系统随即分析需求，自动规划任务并生成相应代码（图\ref{fig:demo_plan}）。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_edit_modal.png}
   \caption{添加NWS Weather API：粘贴OpenAPI规范定义并配置端点与认证方式}
   \label{fig:demo_edit}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_actions_table.png}
   \caption{APIActions总览界面：展示所有注册的API、认证方式与可用操作数}
   \label{fig:demo_table}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_prompt_tags.png}
   \caption{对话框中勾选相关API，配合自然语言指令触发任务生成}
   \label{fig:demo_prompt}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_plan_files.png}
   \caption{系统生成项目结构与依赖安装命令，包含前端组件与服务调用逻辑}
@@ -159,14 +159,14 @@ APIActions通过以下几种方式优化了LLM应用效率：
 
 在预览界面中，用户可验证机器人能否正确响应请求。如图\ref{fig:demo_dog}所示，用户请求查看狗狗图片时，系统调用The Dog API返回相关图片。图\ref{fig:demo_weather}展示用户询问天气情况时，系统识别意图并调用NWS Weather API提供实时天气信息。这些交互示例展示了APIActions与LLM的协同工作方式，系统能准确理解用户意图并将其转化为相应API调用，体现了API优先开发在LLM应用场景中的实际价值。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_dog_preview.png}
   \caption{用户请求"show me a cute dog"，系统调用The Dog API返回图片}
   \label{fig:demo_dog}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/api-actions/demo_weather_preview.png}
   \caption{询问天气时，系统识别意图并调用NWS Weather API提供实时天气信息}
