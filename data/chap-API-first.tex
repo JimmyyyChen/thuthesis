@@ -123,8 +123,6 @@ APIActions通过以下几种方式优化了LLM应用效率：
 
 本节以聊天机器人应用为例，展示bolt.SE中APIActions模块如何集成外部API并借助LLM实现任务规划和代码生成。该机器人集成了OpenAI API、NWS Weather API与The Dog API，能够回答天气相关问题并展示狗狗图片。
 
-\subsection{API配置与应用开发流程}
-
 用户首先通过图形界面配置所需API（图\ref{fig:demo_edit}），粘贴OpenAPI定义并选择认证方式。配置完成后，所有API在总览界面中可见（图\ref{fig:demo_table}），支持编辑、删除和重载操作。用户在主对话框中勾选相关API（图\ref{fig:demo_prompt}），并使用自然语言描述需求：\texttt{make a chatbot that can answer weather related questions and show dog images}。系统随即分析需求，自动规划任务并生成相应代码（图\ref{fig:demo_plan}）。
 
 \begin{figure}[H]
@@ -154,8 +152,6 @@ APIActions通过以下几种方式优化了LLM应用效率：
   \caption{系统生成项目结构与依赖安装命令，包含前端组件与服务调用逻辑}
   \label{fig:demo_plan}
 \end{figure}
-
-\subsection{功能验证与效果展示}
 
 在预览界面中，用户可验证机器人能否正确响应请求。如图\ref{fig:demo_dog}所示，用户请求查看狗狗图片时，系统调用The Dog API返回相关图片。图\ref{fig:demo_weather}展示用户询问天气情况时，系统识别意图并调用NWS Weather API提供实时天气信息。这些交互示例展示了APIActions与LLM的协同工作方式，系统能准确理解用户意图并将其转化为相应API调用，体现了API优先开发在LLM应用场景中的实际价值。
 
