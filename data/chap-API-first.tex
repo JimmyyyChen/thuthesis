@@ -9,7 +9,7 @@ API优先开发（API-First Development）是一种软件设计与开发方法�
 
 \section{API优先开发对于bolt.SE的意义}
 
-在LLM驱动的软件开发中，API优先方法具有独特价值。LLM与外部系统交互需要明确的结构和规范，API定义为LLM提供了调用外部服务的具体指南，减少模糊指令导致的错误。通过API集成，LLM能够获取实时数据和使用专业工具，扩展其能力范围。API定义中的认证和授权机制为LLM提供了受控的访问方式，确保其操作在安全合规的范围内执行。此外，API优先方法支持LLM将复杂任务分解为多个API调用的组合，提高问题解决效率。
+在LLM驱动的软件开发中，API优先方法提供了一种将LLM与外部系统交互的明确结构和规范。API定义为LLM提供了调用外部服务的具体指南，减少模糊指令导致的错误。通过API集成，LLM能够获取实时数据和使用专业工具，扩展其能力范围。API定义中的认证和授权机制为LLM提供了受控的访问方式，确保其操作在安全合规的范围内执行。此外，API优先方法支持LLM将复杂任务分解为多个API调用的组合，提高问题解决效率。
 
 bolt.SE将API优先理念融入平台设计，通过将OpenAPI规范集成到开发流程中，实现LLM与外部API的有效协作，开发者能通过自然语言交互获得API增强的开发支持。bolt.SE的APIActions模块结合了LLM的灵活性与API的精确性和功能扩展性，有效提升了软件开发效率。
 
@@ -17,13 +17,11 @@ bolt.SE将API优先理念融入平台设计，通过将OpenAPI规范集成到开
 
 在bolt.SE的设计过程中，我们选择OpenAPI规范作为API描述标准，主要基于其广泛的行业接受度、丰富的工具生态系统以及对机器可读格式的良好支持。相比其他API描述格式，OpenAPI提供了更完整的功能描述能力和更好的扩展性，这些特性使其特别适合与LLM集成，便于模型理解和处理API结构。
 
-OpenAPI规范（原Swagger规范）是API优先开发的主流规范之一，为API描述和交互提供了标准化、语言无关的格式\cite{openapi2023}。作为业界广泛采用的API定义标准，OpenAPI使开发者能以声明式方式完整定义API的各方面，实现从设计到实现、测试和文档的全生命周期管理。
-
-OpenAPI规范采用JSON或YAML格式，结构化描述API的端点（endpoints）、操作（operations）、参数、响应、认证方法等关键要素。这种规范不仅适合人类理解，也便于机器处理，成为前端、后端和各类工具间沟通的桥梁。在bolt.SE的开发环境中，OpenAPI规范定义RESTful API调用说明，从而更高效地利用现有功能，避免重复开发，结构化API定义还能够避免在大模型上下文中包含冗长API使用说明，节省token空间。
+OpenAPI规范（原Swagger规范）是API优先开发的主流规范之一，为API描述和交互提供了标准化、语言无关的格式\cite{openapi2023}。作为业界广泛采用的API定义标准，OpenAPI使开发者能以声明式方式完整定义API的各要素。OpenAPI规范采用JSON或YAML格式，结构化描述API的端点（endpoints）、操作（operations）、参数、响应、认证方法等关键要素。这种规范不仅适合人类理解，也便于机器处理，成为前端、后端和各类工具间沟通的桥梁。在bolt.SE的开发环境中，使用了OpenAPI的YAML规范定义RESTful API调用，从而更高效地利用现有功能，避免重复开发，结构化API定义还能够避免在大模型上下文中包含冗长API使用说明，节省token空间。
 
 OpenAPI规范主要包含以下组成部分\cite{openapi2023}：
 
-\begin{enumerate}
+\begin{itemize}
   \item 基本信息：API的标题、描述、版本、联系人信息和许可证等元数据。
   
   \item 服务器信息：API的基础URL和不同环境（开发、测试、生产）的服务器地址。
@@ -39,7 +37,7 @@ OpenAPI规范主要包含以下组成部分\cite{openapi2023}：
     \end{itemize}
   
   \item 操作：每个API端点的可用操作，包括操作ID与摘要、描述与标签、参数定义（路径、查询、头部、cookie等）、请求体结构与格式、可能的响应状态与内容及所需安全机制。
-\end{enumerate}
+\end{itemize}
 
 以下是bolt.SE中支持的OpenAPI定义示例，展示一个简单的天气API：
 
@@ -95,9 +93,9 @@ APIActions是bolt.SE中实现API优先开发的核心功能模块，为LLM提供
   \label{fig:api_actions_class}
 \end{figure}
 
-ApiActions类是核心数据结构，包含API的所有必要信息：
+ApiActions的数据结构包含API的所有必要信息，包括：
 
-\begin{enumerate}
+\begin{itemize}
   \item 基本信息：唯一标识符（id）、名称（name）和基础URL（serverUrl）。
   
   \item API操作集：由多个Action对象组成，每个Action定义一个API端点的HTTP方法、路径和功能摘要。
@@ -105,25 +103,15 @@ ApiActions类是核心数据结构，包含API的所有必要信息：
   \item 认证信息：支持无需认证的API（none）、API密钥认证（apiKey，支持Basic、Bearer或自定义头部方式）以及其他自定义认证（other，可配置自定义头部和查询参数）。
   
   \item OpenAPI规范：通过schema字段存储完整OpenAPI规范定义，为系统提供API详细信息。
-\end{enumerate}
+\end{itemize}
 
-APIActions通过以下几种方式优化了LLM应用效率：
-
-\begin{enumerate}
-  \item 结构化Schema传递：将OpenAPI规范解析为紧凑的TypeScript数据模型，仅保留端点信息与参数定义的核心要素，相比原始描述节省token消耗。
-  
-  \item 外部数据获取：LLM能透过提供的API，直接访问实时数据源，如天气服务或金融API。
-  
-  \item 模块化上下文管理：用户可通过\texttt{ApiActionsContextTags}组件控制当前对话中加入哪些API定义作为上下文，避免全量API信息占用上下文窗口。
-  
-  \item 缓存与持久化优化：系统通过IndexedDB持久化存储API定义，避免重复传输API信息，在多轮对话中持续复用已定义的API结构，降低冗余信息传递。
-  \end{enumerate}
+APIActions通过多项机制提升了大语言模型在调用API过程中的效率。首先，它将OpenAPI规范转化为紧凑的TypeScript数据模型，仅保留端点和参数的核心定义，从而显著减少了上下文中的token消耗。在数据访问方面，LLM可以借助API直接获取实时信息，例如天气或金融数据，而无需通过冗长的提示词进行间接查询。同时，系统支持模块化的上下文管理，开发者可控制哪些API定义参与当前对话，避免上下文窗口被冗余信息占用。此外，API定义还通过 IndexedDB 实现本地缓存与持久化存储，使得在多轮对话中能够高效复用已有结构，无需反复传输相同内容，从整体上降低了通信与处理成本。
 
 \section{实例应用场景}
 
 本节以聊天机器人应用为例，展示bolt.SE中APIActions模块如何集成外部API并借助LLM实现任务规划和代码生成。该机器人集成了OpenAI API、NWS Weather API与The Dog API，能够回答天气相关问题并展示狗狗图片。
 
-用户首先通过图形界面配置所需API（图\ref{fig:demo_edit}），粘贴OpenAPI定义并选择认证方式。配置完成后，所有API在总览界面中可见（图\ref{fig:demo_table}），支持编辑、删除和重载操作。用户在主对话框中勾选相关API（图\ref{fig:demo_prompt}），并使用自然语言描述需求：\texttt{make a chatbot that can answer weather related questions and show dog images}。系统随即分析需求，自动规划任务并生成相应代码（图\ref{fig:demo_plan}）。
+用户首先通过图形界面配置所需API（图\ref{fig:demo_edit}），粘贴OpenAPI定义并选择认证方式。配置完成后，所有API在总览界面中可见（图\ref{fig:demo_table}），支持编辑、删除和重载操作。用户在主对话框中勾选相关API（图\ref{fig:demo_prompt}），并使用自然语言描述需求：\texttt{Make a chatbot that can answer weather related questions and show dog images}。系统随即分析需求，自动规划任务并生成相应代码（图\ref{fig:demo_plan}）。
 
 \begin{figure}[H]
   \centering

@@ -5,13 +5,9 @@
 
 在现代软件工程中，CI/CD（持续集成与持续部署）已成为保障开发效率与代码质量的核心机制。传统搭建 CI/CD 流水线通常依赖人工配置脚本与手动部署流程，不仅繁琐易错，且难以在多工具协同开发场景中实现统一管理。
 
-bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使大语言模型（LLM）能够自动访问如 GitHub、GitLab 等远程仓库管理平台，执行如创建仓库、推送代码、触发流水线等操作。一旦接入了具备 CI/CD 能力的 MCP 服务器（例如 \texttt{server-github} 或 \texttt{server-gitlab}），系统即具备了构建自动化部署流程的基础。
+bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使大语言模型（LLM）能够自动访问如 GitHub、GitLab 等远程仓库管理平台，执行如创建仓库、推送代码、触发流水线等操作。一旦接入了具备 CI/CD 能力的 MCP 服务器（例如 \texttt{server-github} 或 \texttt{server-gitlab}），系统即具备了构建自动化部署流程的基础。另一方面，bolt.SE 的测试驱动开发（TDD）模块提供从测试定义到代码验证的一体化支持，使 LLM 在开发早期即能生成具备行为保证的功能模块。二者结合，即形成测试定义、功能实现、代码验证、版本控制、自动部署的完整开发闭环。
 
-另一方面，bolt.SE 的测试驱动开发（TDD）模块提供从测试定义到代码验证的一体化支持，使 LLM 在开发早期即能生成具备行为保证的功能模块。二者结合，即形成测试定义、功能实现、代码验证、版本控制、自动部署的完整开发闭环。
-
-本章将展示如何在 bolt.SE 中配置 GitLab MCP 工具，配合 TDD 流程构建 Todo 应用，并自动生成 CI/CD 配置，实现从本地测试到远程部署的全链路自动化流程。这一过程体现了 MCP 与 TDD 的协同机制如何系统性地提升 LLM 驱动开发的工程化能力。
-
-实验流程首先由 Jest 测试用例反向生成最小可行代码并即时验证（TDD），随后通过 MCP 连接 server-gitlab，在 GitLab 上新建仓库并推送代码，最后由 LLM 自动编写 \texttt{.gitlab-ci.yml}，为主干推送触发测试并部署到 Vercel。
+本章将展示如何在 bolt.SE 中配置 GitLab MCP 工具，配合 TDD 流程构建 Todo 应用，并自动生成 CI/CD 配置，实现从本地测试到远程部署的全链路自动化流程。这一过程体现了 MCP 与 TDD 的协同机制如何系统性地提升 LLM 驱动开发的工程化能力。实验流程首先由 Jest 测试用例反向生成最小可行代码并即时验证（TDD），随后通过 MCP 连接 \texttt{server-gitlab}，在 GitLab 上新建仓库并推送代码，最后由 LLM 自动编写 \texttt{.gitlab-ci.yml}，为主干推送触发测试并部署到 Vercel。
 
 \section{环境准备与整体流程}
 \label{sec:cicd-overview}
@@ -23,30 +19,23 @@ bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使
     \label{fig:ci_prompt}
 \end{figure}
 
-如图 \ref{fig:ci_prompt} 所示，开发者输入指令："Create a simple Todo app with minimal code. Then run the provided test file to verify functionality."
+如图 \ref{fig:ci_prompt} 所示，开发者输入指令：\texttt{Create a simple Todo app with minimal code. Then run the provided test file to verify functionality.}
 
 系统即开始驱动以下流程：
 
-\begin{itemize}
+\begin{enumerate}
   \item 解析 Jest 测试，用于约束 LLM 生成代码（TDD 模块）
   \item 生成 React + Vite 工程、通过全部断言并预览界面
   \item 连接 \texttt{server-gitlab}，验证令牌有效性（MCP 模块）
   \item 生成 \texttt{.gitlab-ci.yml}、\texttt{vercel.json} 等 CI 配置（LLM）
   \item 调用 \texttt{create\_repository} 工具，在 GitLab 创建远端仓库（MCP）
   \item 将本地文件推送至远端并触发首轮流水线
-\end{itemize}
+\end{enumerate}
 
 \section{配置 GitLab MCP 服务器}
 \label{sec:cicd-mcp-config}
 
-图 \ref{fig:mcp_gitlab_cfg} 展示了 \texttt{server-gitlab} 的 JSON 配置。  
-要点如下：
-
-\begin{itemize}
-  \item 通过 \texttt{npx -y @modelcontextprotocol/server-gitlab} 启动本地转接进程，传输类型为 \texttt{stdio}。  
-  \item 使用 \texttt{GITLAB\_PERSONAL\_ACCESS\_TOKEN} 环境变量完成 OAuth 认证，仅暴露最小权限作用域（\texttt{api\_read\_write}）。  
-  \item 再次点击 "Check availability" 后，状态变为 Available，客户端即可发现 \texttt{create\_repository}、\texttt{list\_projects} 等工具。  
-\end{itemize}
+图 \ref{fig:mcp_gitlab_cfg} 展示了 \texttt{server-gitlab} 的 JSON 配置。配置过程首先通过 \texttt{npx -y @modelcontextprotocol/server-gitlab} 启动本地转接进程，传输类型设置为 \texttt{stdio}。在认证环节，系统使用 \texttt{GITLAB\_PERSONAL\_ACCESS\_TOKEN} 环境变量完成 OAuth 认证，并仅暴露最小权限作用域（\texttt{api\_read\_write}）。完成配置后，点击 “Check availability” 按钮进行连通性检测，状态变为 “Available” 即表示客户端已成功发现 \texttt{create\_repository}、\texttt{list\_projects} 等可用工具。
 
 \begin{figure}[H]
   \centering
@@ -107,4 +96,4 @@ GitLab 网页端界面（图 \ref{fig:gitlab_repo}）可见首个提交 \textit{
   \label{fig:gitlab_repo}
 \end{figure}
 
-通过将 MCP 与 TDD 模块的紧密结合，bolt.SE 实现从本地测试、自动集成到生产部署的完整流程自动化。该案例表明，在完善的测试约束和标准化协议支持下，开发者可以更高效地完成 DevOps 流程，显著减少重复性操作。
+通过 MCP 与 TDD 模块的融合，bolt.SE 构建了一条从代码生成到持续部署的完整自动化链路。MCP 提供了标准化的外部工具访问能力，使 LLM 能够直接操作 GitLab 等远程仓库平台；而 TDD 则确保生成代码符合预期行为且可验证。这种协同机制不仅简化了 DevOps 流程，更转变了传统 CI/CD 的构建方式——从手工配置脚本到由 LLM 理解测试需求并自动生成部署配置。该案例展示了 AI 驱动开发在软件交付过程实现了更高水平的自动化，提升了开发效率。

@@ -13,17 +13,20 @@ bolt.SE的MCP模块是该协议的实际应用实现，它支持用户配置和�
 
 MCP 支持多种类型的工具，能够覆盖不同 AI 应用的需求。例如，信息检索工具允许访问网络搜索、文档查询和数据库等外部数据源；计算工具提供数学运算、统计分析等能力，弥补 LLM 在精确计算方面的不足；文件操作工具支持文件的读写、创建和删除，是代码生成与文档处理的基础；API 调用工具封装了第三方服务接口，如天气、地图和社交媒体 API 等；系统交互工具提供命令执行与进程管理能力，而领域专用工具则面向代码分析、图形处理和自然语言处理等特定场景。
 
-在传输层面，MCP 兼容多种协议（如 stdio、HTTP SSE 等），便于在不同部署环境下灵活应用。安全性方面，MCP 明确界定了权限边界，确保 AI 模型仅能通过受控接口访问外部资源，从而有效管控系统安全风险。
+在传输层面，MCP 支持 stdio、HTTP SSE 两种传输类型，便于在不同部署环境下灵活应用。安全性方面，MCP 明确界定了权限边界，确保 AI 模型仅能通过受控接口访问外部资源，从而有效管控系统安全风险。
 
-针对 LLM 驱动的软件开发，MCP 具有不可替代的价值。一方面，MCP 使 LLM 能够实时访问外部数据，突破模型知识截止的局限，保持信息的时效性。另一方面，借助 MCP，LLM 可调用各类专业工具和 API，完成其自身能力范围之外的任务，如数据分析与文件处理，从而极大拓展了应用场景和能力边界。
+针对 LLM 驱动的软件开发，一方面，MCP 使 LLM 能够实时访问外部数据，突破模型知识截止的局限，保持信息的时效性。另一方面，借助 MCP，LLM 可调用各类专业工具和 API，完成其自身能力范围之外的任务，如数据分析与文件处理，从而极大拓展了应用场景和能力边界。
 
-此外，MCP 能够引导 LLM 从可靠的外部资源获取信息，减少对参数化知识的依赖，显著提升输出的准确性并降低"幻觉"风险。在复杂任务求解中，MCP 支持 LLM 与外部工具的多轮交互，实现分步骤问题求解与中间结果验证。其安全机制亦确保 LLM 能在保护隐私的前提下访问用户私有数据，实现功能性与安全性的平衡。
+此外，MCP 能够引导 LLM 从可靠的外部资源获取信息，减少对参数化知识的依赖，显著提升输出的准确性并降低幻觉风险。在复杂任务求解中，MCP 支持 LLM 与外部工具的多轮交互，实现分步骤问题求解与中间结果验证。其安全机制亦确保 LLM 能在保护隐私的前提下访问用户私有数据，实现功能性与安全性的平衡。
 
 bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口，促进 LLM 与外部工具及数据源的协同工作，使开发者能够通过自然语言交互获得工具增强的智能辅助，既保留 LLM 的灵活创造力，又引入专业工具的精确性与扩展能力。
 
 \section{bolt.SE中的MCP功能实现}
 
 图\ref{fig:mcp_workflow}展示了MCP在bolt.SE中的完整交互流程，涵盖了配置、连接、工具调用和结果返回四个主要阶段。首先是配置阶段，用户通过界面配置MCP服务器，系统从IndexedDB加载现有配置并显示，支持配置stdio和SSE两种传输类型服务器；其次是连接阶段，系统根据配置类型分别创建对应的客户端实例，对stdio类型服务器通过命令行参数启动本地进程并建立管道通信，对SSE类型服务器则通过HTTP请求建立事件流连接；第三是工具发现阶段，所有服务器连接成功后向客户端提供其可用工具列表，系统将这些工具信息整合并展示给用户；最后是工具调用阶段，当用户发送对话消息时，系统准备包含MCP工具的上下文传递给AI，AI可根据需要调用本地或远程工具，执行结果通过对应服务器返回，并最终整合到对话响应中展示给用户。流程最后还包括会话结束时系统关闭所有MCP连接的资源回收过程。
+
+图\ref{fig:mcp_state}展示了MCP系统的状态转换流程，刻画了从应用启动到服务关闭的各个细节状态。状态图分为四个主要区域：客户端初始化、服务器交互、对话流程和会话结束。
+
 
 \begin{figure}[H]
   \centering
@@ -32,7 +35,6 @@ bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口�
   \label{fig:mcp_workflow}
 \end{figure}
 
-图\ref{fig:mcp_state}展示了MCP系统的状态转换流程，刻画了从应用启动到服务关闭的各个细节状态。状态图分为四个主要区域：客户端初始化、服务器交互、对话流程和会话结束。
 
 \begin{figure}[H]
   \centering
@@ -41,7 +43,6 @@ bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口�
   \label{fig:mcp_state}
 \end{figure}
 
-如图\ref{fig:mcp_class}所示的类图展示了MCP功能的各组件间的关系：
 
 \begin{figure}[H]
   \centering
@@ -50,7 +51,7 @@ bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口�
   \label{fig:mcp_class}
 \end{figure}
 
-主要组件包括：
+图\ref{fig:mcp_class}则展示了MCP功能的各组件间的关系。主要组件包括：
 
 \begin{enumerate}
   \item 配置管理组件：
@@ -117,12 +118,31 @@ MCP服务器配置支持以下主要属性：
 \section{实例应用场景}
 \label{sec:mcp-iotdb-demo}
 
-本节以"MCP协同IoTDB与OpenAPI构建交互式前端应用"为例，展示MCP在实际应用中的完整流程与价值。
+本节以MCP协同Apache IoTDB与OpenAPI构建交互式前端应用为例，展示MCP在实际应用中的完整流程与价值。
+
+Apache IoTDB是一种面向工业物联网的时序数据库管理系统，采用轻量化架构，支持物联网时序数据的收集、存储、管理与分析，具有多协议兼容、高压缩比、高吞吐读写等特点\cite{ApacheIoTDB2025}。而IoTDB MCP Server是基于模型上下文协议开发的专用服务，允许大语言模型通过自然语言直接与IoTDB交互，无需手动将自然语言转换为SQL并单独执行\cite{IoTDBMCP2025}。
+
+在本实例中，首先在开发环境部署IoTDB 2.0.2实例，并将名为\texttt{battery\_data}的样例数据表写入30条电池监测数据（包含直流电压、负载电流、整流器电流等参数）。以下是部分样例数据：
+
+\begin{minted}{sql}
+INSERT INTO battery_data(
+  time,station_id,dc_voltage,load_current,battery_current, 
+  float_voltage_set,equalize_voltage_set,rectifier_current
+) VALUES
+(1742313600000,'b0001',50.88,69.36,0.0,50.9,51.1,82.48),
+(1742313720000,'b0001',50.88,67.05,0.0,50.9,51.1,81.12),
+(1742313840000,'b0001',50.88,67.37,0.0,50.9,51.1,81.24),
+\end{minted}
 
 
-首先，开发环境部署IoTDB 2.0.2实例，并将名为\texttt{battery\_data}的样例数据表写入30条监测数据（包含电压、电流等参数）。系统通过两种方式暴露数据库能力：MCP通道使用\texttt{remote-sse}服务器提供三个核心工具（\textit{list\_tables}、\textit{describe\_table}和\textit{read\_query}），供LLM进行表结构分析和数据查询；同时，REST通道通过IoTDB内置的REST Service V2，将查询接口\texttt{/rest/table/v1/query}按OpenAPI 3.0规范描述。
+接着我们部署Apache IoTDB MCP Server\cite{IoTDBMCP2025}作为本地stdio服务器，提供与数据库交互的MCP接口。由于实际使用中，数据库服务通常部署在私有网络中，而bolt.SE运行在浏览器中，因此需要将本地IOTDB MCP Server默认的stdio通信模式转换为SSE。我们借助SuperGateway\cite{SuperGateway2025}工具将本地stdio通信模式转换为SSE。SuperGateway在本地启动后，会自动创建一个HTTP SSE端点，将传入的请求转发给本地stdio服务，并将stdio服务的输出作为SSE事件流返回。这种转换机制使得本地stdio服务能够作为SSE服务对外提供访问，确保bolt.SE能够访问到本地部署的IoTDB MCP服务。这样，IoTDB MCP Server以\texttt{remote-sse}形式对外提供三个核心工具：
+\begin{itemize}
+  \item \textit{list\_tables}：列出数据库中所有可用的表
+  \item \textit{describe\_table}：获取指定表的结构信息，包括列名和数据类型
+  \item \textit{read\_query}：执行自定义SQL查询并返回结果
+\end{itemize}
 
-图~\ref{fig:mcp-config}展示了bolt.SE的MCP配置界面。系统通过以下配置成功发现三个IoTDB工具：
+在bolt.SE中，我们打开MCP配置界面，使用以下JSON配置连接到远程SSE服务：
 
 \begin{minted}{json}
 {
@@ -135,6 +155,8 @@ MCP服务器配置支持以下主要属性：
 }
 \end{minted}
 
+其中\texttt{url}参数指向SuperGateway提供的SSE端点。配置完成后，bolt.SE自动检测连接状态并发现服务器提供的三个IoTDB工具，如图~\ref{fig:mcp-config}所示。
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/iotdb-demo/mcp-config.png}
@@ -142,7 +164,12 @@ MCP服务器配置支持以下主要属性：
   \label{fig:mcp-config}
 \end{figure}
 
-同时，开发者将IoTDB查询接口按OpenAPI 3.0规范描述，并在bolt.SE的\textit{Edit actions}界面完成配置，仅保留\textit{queryTableData}动作供LLM调用。
+
+除了MCP服务外，我们还需启用IoTDB内置的REST Service V2\cite{IoTDBRestV2}服务，为应用提供标准化的HTTP API访问能力。这一服务默认在IoTDB启动时在端口18080上提供服务，提供包括数据查询、元数据管理等功能的REST接口。
+
+我们使用ngrok将IoTDB的REST服务端口映射至公网，确保bolt.SE能够直接访问数据库的REST API。对于本实例，我们主要关注查询接口\verb|/rest/table/v1/query|，该接口支持通过POST请求执行SQL查询并返回结果。
+
+在bolt.SE中，我们需将IoTDB的REST API按OpenAPI 3.0规范进行描述。透过前面\ref{chap:api-first}章节介绍的APIActions模块，我们可以将API定义注册到系统中。首先在bolt.SE的\textit{Edit actions}界面创建新的API定义，配置API的基本信息（名称、服务器URL）以及Basic认证方式，并粘贴符合OpenAPI 3.0规范的YAML定义：
 
 \begin{minted}{yaml}
 paths:
@@ -159,21 +186,9 @@ paths:
               required: [database, sql]
 \end{minted}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/screenshots/iotdb-demo/openapi-editor.png}
-  \caption{OpenAPI文档编辑与认证配置界面}
-  \label{fig:openapi-editor}
-\end{figure}
+bolt.SE的APIActions模块会解析这一定义，提取API端点、操作ID和参数结构，并将其转换为内部数据模型存储在IndexedDB中。系统自动将API作为\textit{queryTableData}动作注册到对话上下文中，供LLM在需要时调用。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/screenshots/iotdb-demo/api-actions.png}
-  \caption{最终配置的API动作列表}
-  \label{fig:api-actions}
-\end{figure}
-
-完成配置后，开发者向系统提交以自然语言描述的提示："Build a basic app that displays IoTDB data in a graph. Please use the tool to check the current database structure. Add a "Reload" button to refresh the data by calling the API."
+完成配置后，开发者向系统提交以自然语言描述的提示：\texttt{Build a basic app that displays IoTDB data in a graph. Please use the tool to check the current database structure. Add a "Reload" button to refresh the data by calling the API.}
 
 
 系统通过以下步骤响应：
@@ -190,6 +205,8 @@ paths:
   
   \item 最后LLM基于获取的数据结构和API能力生成完整应用代码
 \end{enumerate}
+
+系统根据提示自动创建完整的Vite+React工程，包括依赖配置、文件结构和核心组件\texttt{BatteryDataChart.jsx}，并在内置Workbench环境中运行。
 
 \begin{figure}[H]
   \centering
@@ -210,7 +227,6 @@ paths:
   \label{fig:mcp-combined}
 \end{figure}
 
-系统根据提示自动创建完整的Vite+React工程，包括依赖配置、文件结构和核心组件\texttt{BatteryDataChart.jsx}，并在内置Workbench环境中运行。
 
 \begin{figure}[H]
   \centering
@@ -219,6 +235,6 @@ paths:
   \label{fig:app-preview}
 \end{figure}
 
-图~\ref{fig:app-preview}展示了最终应用界面。该应用以折线图形式展示\texttt{DC Voltage}、\texttt{Load Current}和\texttt{Rectifier Current}等数据曲线，顶部\textit{Reload Data}按钮触发\texttt{queryTableData}API调用，下拉框支持数据条数切换。
+图~\ref{fig:app-preview}展示了最终应用界面。该应用以折线图形式展示\texttt{DC Voltage}、\texttt{Load Current}和\texttt{Rectifier Current}等数据曲线，顶部\textit{Reload Data}按钮触发\texttt{queryTableData} API调用，下拉框支持数据条数切换。
 
-这个实例充分展示了MCP的核心价值：通过标准化协议，LLM能够统一访问不同来源的外部能力，理解复杂数据结构，并在单一提示中协调使用多种外部工具，实现从需求理解到功能实现的端到端开发流程。
+这个实例展示了MCP与API优先开发在实际应用中的结合方式。MCP协议使LLM能够与IoTDB数据库进行交互，执行表结构分析和数据查询；OpenAPI规范则为系统提供了标准化的HTTP接口定义，便于实现数据刷新功能。在技术路线上，MCP适合提供灵活的外部工具调用机制，而OpenAPI则侧重于规范化的接口描述。这种组合方式有助于简化开发流程，使用户能够通过自然语言指令构建数据可视化应用。
