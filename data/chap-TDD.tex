@@ -37,7 +37,7 @@ bolt.SE测试模块能解析此结构，提取测试套件和用例的层次关�
 
 图\ref{fig:test_sequence}展示了测试功能的完整流程，包括用户测试定义、使用及验证的完整流程与跨组件信息传递机制。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{figures/bolt_test_sequence.pdf}}
   \caption{测试功能流程图：展示用户测试定义、使用及验证的完整流程与跨组件信息传递机制}
@@ -73,7 +73,7 @@ bolt.SE测试系统采用组件化架构，主要包含以下核心模块：
 
 bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所示：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{figures/bolt_test_class.pdf}}
   \caption{测试数据模型类图：描述测试定义的核心数据结构及关系，包含测试代码项、测试用例与测试套件的层次组织}
@@ -99,7 +99,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 在测试驱动开发的起始阶段，开发者首先通过AddTestModal组件创建测试代码，如图\ref{fig:tdd_add_test}所示，系统解析测试结构并以树形展示，确定开发任务范围：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/add_test_modal.png}
   \caption{在AddTestModal中粘贴\texttt{calculator\_functions.test.js}，系统解析出\textit{Calculator Functions}测试套件与12条断言，并以树形结构展示}
@@ -108,7 +108,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 开发者随后在聊天窗口输入自然语言描述需求：\texttt{Build a calculator}，系统自动注入测试文件与指导语，为LLM提供明确功能规格，如图\ref{fig:tdd_prompt}所示：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/calculator_prompt.png}
   \caption{开发者在聊天窗口输入\texttt{Build a calculator}的需求，系统自动注入测试文件与指导语，为LLM提供明确功能规格}
@@ -117,7 +117,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 完成测试定义后，LLM分析测试规格并生成相应实现，包括四个算术函数与测试配置。测试执行结果显示全部通过（图\ref{fig:tdd_green_initial}），表明当前实现符合测试规格要求：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/green_pass_initial.png}
   \caption{LLM基于测试用例生成实现代码，运行测试后显示12条断言全部通过}
@@ -126,7 +126,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 为演示迭代修复流程，开发者修改一条加法测试断言为\verb|expect(add(2, 3)).toBe(0);|，相当于引入“2+3应等于0”的特殊要求。执行测试后，系统进入红灯阶段（图\ref{fig:tdd_red}）：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/test_edit_fail.png}
   \caption{修改测试断言后执行测试，出现一条失败记录，系统进入红灯阶段}
@@ -135,7 +135,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 系统将测试失败信息传递给LLM，模型识别出需要对特定输入做特殊处理，并生成相应补丁代码（图\ref{fig:tdd_fix}）：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/fix_suggestion.png}
   \caption{系统将测试失败信息传递给LLM，模型识别出\texttt{add}函数需针对(2,3)输入做特殊处理，并生成相应补丁代码}
@@ -144,7 +144,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 应用补丁后再次执行测试，所有断言重新通过，恢复绿灯状态（图\ref{fig:tdd_green_final}）：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/green_pass_final.png}
   \caption{补丁应用后测试套件重新通过}
@@ -153,7 +153,7 @@ bolt.SE定义了结构化的测试数据模型，如图\ref{fig:test_class}所�
 
 在测试保障下，开发者可以安全地进行代码优化与界面改进。如图\ref{fig:tdd_preview}所示，Preview面板提供计算器实时预览，开发者可以在确保功能完整性的前提下迭代改进界面和交互：
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.9\textwidth]{figures/screenshots/tdd/preview_ui.png}
   \caption{Preview面板提供计算器实时预览。开发者可进行代码重构与优化，测试套件确保功能完整性不受影响}

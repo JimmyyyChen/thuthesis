@@ -12,7 +12,7 @@ bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使
 \section{环境准备与整体流程}
 \label{sec:cicd-overview}
 
-\begin{figure}[H]
+\begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/screenshots/ci-cd/ci_prompt.png}
     \caption{开发者输入指令}
@@ -37,7 +37,7 @@ bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使
 
 图 \ref{fig:mcp_gitlab_cfg} 展示了 \texttt{server-gitlab} 的 JSON 配置。配置过程首先通过 \texttt{npx -y @modelcontextprotocol/server-gitlab} 启动本地转接进程，传输类型设置为 \texttt{stdio}。在认证环节，系统使用 \texttt{GITLAB\_PERSONAL\_ACCESS\_TOKEN} 环境变量完成 OAuth 认证，并仅暴露最小权限作用域（\texttt{api\_read\_write}）。完成配置后，点击 “Check availability” 按钮进行连通性检测，状态变为 “Available” 即表示客户端已成功发现 \texttt{create\_repository}、\texttt{list\_projects} 等可用工具。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/ci-cd/mcp_gitlab_cfg.png}
   \caption{MCP 服务器 \texttt{server-gitlab} 配置与连通性检测}
@@ -50,14 +50,14 @@ bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使
 系统解析出四条断言：\textit{adds task}、\textit{rejects empty task}、\textit{toggles status}、\textit{deletes task}。  
 随后，LLM 依据 TDD 原则生成最小实现；所有测试一次通过，且预览页展示可交互页面（图 \ref{fig:app_preview}）。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/ci-cd/jest_import.png}
   \caption{导入 Jest 测试文件并解析测试树}
   \label{fig:jest_import}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{figures/screenshots/ci-cd/app_preview.png}
   \caption{全部测试通过后的运行预览}
@@ -69,7 +69,7 @@ bolt.SE 通过模型上下文协议（MCP）引入标准化的工具接口，使
 
 LLM 接管流水线脚本编写，输出精简版 \texttt{.gitlab-ci.yml}（图 \ref{fig:ci_plan}，左侧工作卡片）。核心逻辑包括：测试阶段使用 \texttt{node:18} 镜像，执行 \texttt{npm ci \&\& npm test}；部署阶段仅当分支为 \texttt{main} 且测试成功时调用 Vercel CLI 部署；同时缓存 \texttt{node\_modules} 以加速后续执行。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/ci-cd/ci_plan.png}
   \caption{生成 CI/CD 计划卡片及 \texttt{.gitlab-ci.yml} 代码差异}
@@ -80,7 +80,7 @@ LLM 接管流水线脚本编写，输出精简版 \texttt{.gitlab-ci.yml}（图 
 
 系统调用 \texttt{create\_repository} 工具（图 \ref{fig:mcp_invocation}），自动在 GitLab 新建 \texttt{todo-app} 仓库并返回 HTTPS 地址。紧接着执行 Git 操作：将本地 Vite 工程全部推送至远端，并在 CI 界面自动触发 \texttt{npm test} 与 Vercel 部署作业。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/ci-cd/mcp_invocation.png}
   \caption{MCP 工具 \texttt{create\_repository} 的调用参数与返回结果}
@@ -89,7 +89,7 @@ LLM 接管流水线脚本编写，输出精简版 \texttt{.gitlab-ci.yml}（图 
 
 GitLab 网页端界面（图 \ref{fig:gitlab_repo}）可见首个提交 \textit{Add Todo app with GitLab CI/CD and Vercel deployment} 已完成；流水线正在运行，稍后即可在 Vercel 控制台查看部署链接。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/ci-cd/gitlab_repo.png}
   \caption{远端仓库初始化结果（GitLab UI）}

@@ -28,7 +28,7 @@ bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口�
 图\ref{fig:mcp_state}展示了MCP系统的状态转换流程，刻画了从应用启动到服务关闭的各个细节状态。状态图分为四个主要区域：客户端初始化、服务器交互、对话流程和会话结束。
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{figures/mcp_sequence.pdf}}
   \caption{MCP工作流程图：展示用户配置、服务器连接和工具调用的完整流程}
@@ -36,7 +36,7 @@ bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口�
 \end{figure}
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/mcp_state.pdf}
   \caption{MCP状态图：描述MCP连接的各状态及转换关系，从初始配置到工具调用的完整流程}
@@ -44,7 +44,7 @@ bolt.SE 将 MCP 深度融合于系统设计之中，通过标准化工具接口�
 \end{figure}
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/mcp_class.pdf}
   \caption{MCP数据模型类图：展示系统中MCP相关模块的类结构及其关系，包括配置管理、服务创建和连接检查}
@@ -157,7 +157,7 @@ INSERT INTO battery_data(
 
 其中\texttt{url}参数指向SuperGateway提供的SSE端点。配置完成后，bolt.SE自动检测连接状态并发现服务器提供的三个IoTDB工具，如图~\ref{fig:mcp-config}所示。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figures/screenshots/iotdb-demo/mcp-config.png}
   \caption{\texttt{remote-sse}服务器配置与IoTDB工具发现}
@@ -208,7 +208,7 @@ bolt.SE的APIActions模块会解析这一定义，提取API端点、操作ID和�
 
 系统根据提示自动创建完整的Vite+React工程，包括依赖配置、文件结构和核心组件\texttt{BatteryDataChart.jsx}，并在内置Workbench环境中运行。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{subfigure}{0.48\textwidth}
     \centering
@@ -228,7 +228,7 @@ bolt.SE的APIActions模块会解析这一定义，提取API端点、操作ID和�
 \end{figure}
 
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth,height=0.75\textheight,keepaspectratio]{figures/screenshots/iotdb-demo/app-preview.png}
   \caption{生成应用的Workbench预览，展示电池数据监测折线图与数据刷新功能}
