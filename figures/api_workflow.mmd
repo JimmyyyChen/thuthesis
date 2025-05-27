@@ -1,33 +1,33 @@
 sequenceDiagram
-    actor User
-    participant UI as Chat UI
-    participant Tags as API Tags
-    participant Modal as API Modal
-    participant Store as Chat Store
-    participant DB as Storage (IndexedDB)
-    participant LLM as AI Model
+    actor 用户
+    participant UI as 聊天界面
+    participant Tags as API 标签
+    participant Modal as API 模态框
+    participant Store as 聊天存储
+    participant DB as 存储（IndexedDB）
+    participant LLM as 大语言模型
 
-    %% API Management
-    User->>Tags: Click "Add API"
-    Tags->>Modal: Open Modal
-    Modal->>DB: Load APIs
-    User->>Modal: Create/Edit API
-    Modal->>DB: Save API
-    Modal->>Store: Update selectedApiActions
-    Store-->>Tags: Update displayed tags
+    %% API 管理
+    用户->>Tags: 点击“添加 API”
+    Tags->>Modal: 打开模态框
+    Modal->>DB: 加载 API 列表
+    用户->>Modal: 创建/编辑 API
+    Modal->>DB: 保存 API
+    Modal->>Store: 更新 selectedApiActions
+    Store-->>Tags: 刷新显示标签
 
-    %% Using in Chat
-    User->>UI: Send message
-    UI->>Store: Get selectedApiActions
-    Note over UI: Add hidden message with JSON.stringify(selectedApiActions)
-    UI->>LLM: Send prompt with API actions
-    LLM-->>UI: Generate response using APIs
-    UI-->>User: Display response
+    %% 聊天调用
+    用户->>UI: 发送消息
+    UI->>Store: 获取 selectedApiActions
+    Note over UI: 向隐藏消息注入 JSON.stringify(selectedApiActions)
+    UI->>LLM: 携带 API 信息发送提示词
+    LLM-->>UI: 调用 API 生成回复
+    UI-->>用户: 展示回复内容
 
-    %% Editing/Removing
-    User->>Tags: Click API tag / Remove
-    Tags->>Modal: Open with selected API
-    User->>Modal: Modify API
-    Modal->>DB: Update API
-    Modal->>Store: Update selectedApiActions
-    Store-->>Tags: Refresh UI 
+    %% 编辑/删除
+    用户->>Tags: 点击 API 标签 / 删除
+    Tags->>Modal: 打开已选 API
+    用户->>Modal: 修改 API
+    Modal->>DB: 更新 API
+    Modal->>Store: 更新 selectedApiActions
+    Store-->>Tags: 刷新界面
